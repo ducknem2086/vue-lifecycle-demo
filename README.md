@@ -6,12 +6,14 @@
 - Là nơi khai báo logic với Composition API (reactive, ref, computed...)
 - Không thể truy cập DOM hoặc `this` tại đây
 - p/s : có 2 cách viết hàm setup này với trường hợp viết hết css và js ở trong 1 file component.vue:
-- <script>
-- setup(){
-- }
-  </script>
-- và
-- <script setup></script>
+
+    ```ts
+    <script>
+     setup(){
+     }
+    </script>
+      và
+    <script setup></script>
 
 ---
 
@@ -53,22 +55,6 @@
 
 - Component đã bị **xóa khỏi cây DOM**
 - Xác nhận hoàn tất việc gỡ bỏ
-
----
-
-### 8. Một số lifecycle hook nâng cao (ít dùng hơn):
-
-#### `onActivated() / onDeactivated()`
-
-- Dùng trong **<keep-alive>** để biết khi component được kích hoạt hoặc ngừng hoạt động
-
-#### `onErrorCaptured()`
-
-- Bắt lỗi từ child component
-
-#### `onRenderTracked() / onRenderTriggered()`
-
-- Dành cho debug performance khi component render
 
 ---
 

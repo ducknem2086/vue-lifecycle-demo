@@ -10,7 +10,6 @@ onBeforeMount(() => {
 onMounted(() => {
   console.log('Component children mounted.')
 })
-
 </script>
 
 <template>

@@ -100,7 +100,7 @@ function updateCount() {
 </script>
 
 <template>
-  <div>
+  <div class="">
     <button class="btn-click" @click="updateCount">update count</button>
     <button class="btn-click" @click="navigateOtherPage">Navigate</button>
     <h1>home count: {{ count }}</h1>
@@ -111,6 +111,7 @@ function updateCount() {
 .btn-click {
   padding: 20px;
   border: none;
+  margin: 0 20px;
   border-radius: 5px;
   background: #1d9acc;
   background: linear-gradient(
