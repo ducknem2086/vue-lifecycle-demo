@@ -7,19 +7,28 @@ export default {
     //
     // expose to template and other options API hooks
     return {
-      count
+      count,
     }
   },
 
+  beforeCreate() {
+    console.log('beforeCreate', this.count)
+    this.count++
+  },
+
   mounted() {
-    console.log(this.count) // 0
-  }
+    console.log('finished mount ', this.count) // 0
+  },
+
+  updated() {
+    console.log(this.count)
+  },
 }
 </script>
 <template>
-  <button @click="count++">{{ count }}</button>
+  <button @click="count++">
+    {{ count }}
+  </button>
 </template>
 
-<style>
-
-</style>
+<style></style>

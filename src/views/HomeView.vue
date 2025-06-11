@@ -1,43 +1,48 @@
 <script setup lang="ts">
 import {
-  onActivated,
+  computed,
+  onBeforeMount,
   onBeforeUnmount,
   onBeforeUpdate,
-  onDeactivated,
-  onErrorCaptured,
   onMounted,
-  onRenderTracked,
-  onRenderTriggered,
   onUnmounted,
   onUpdated,
-  onWatcherCleanup,
+  reactive,
   ref,
+  type Ref,
 } from 'vue'
 import router from '@/router'
 
-const count = ref(0)
-
-/**
- * hook này chạy khi component sau khi đã mount xong
- */
-onMounted(() => {
-  mountEvent()
-
-  const interval = setInterval(() => {
-    console.log('________')
-    count.value = count.value + 3
-    if (count.value >= 9) {
-      clearInterval(interval)
-      throw new Error('clear interval !!')
-    }
-  }, 3000)
+const count: Ref<string> = ref('0')
+const isEven = computed(() => {
+  return count.value % 2 === 0
+})
+const stateData = reactive({
+  count,
+  isEven,
 })
 
-function mountEvent() {
-  console.log('mount event')
+function mountEvent(param: string): number {
+  console.log('value khi chay vao hook', count.value)
+  count.value++
+  console.log('xu li o trong hook ' + param + ' xong:', count.value)
 }
 
-function navigateOtherPage() {
+/**
+ * hook này là chạy khi route đã được đọc, component instance được tạo nhưng chưa được mount (render dom) xong
+ */
+onBeforeMount(() => {
+  mountEvent('beforeMount')
+})
+
+/**
+ * hook này chạy khi component sau khi đã mount/render lần đầu xong
+ */
+onMounted(() => {
+  mountEvent('onMounted')
+})
+
+function navigateToDashboard() {
   console.log('before navigate event')
   router.push({
     path: '/dashboard',
@@ -52,7 +57,7 @@ function navigateOtherPage() {
  * chỗ này chạy khi component chuẩn bị đóng
  * */
 onBeforeUnmount(() => {
-  console.log('beforeUnmount')
+  mountEvent('onBeforeUnmount')
 })
 
 /**
@@ -66,48 +71,59 @@ onUnmounted(() => {
  * chỗ này chạy khi component chuẩn bị update dom
  */
 onBeforeUpdate(() => {
-  console.log('beforeUpdate')
+  mountEvent('onBeforeUpdate')
 })
 
 /**
  * chỗ này chạy khi component đã update dom xong
  */
 onUpdated(() => {
-  console.log('updated')
-})
-onActivated(() => {
-  console.log('activated')
-})
-onDeactivated(() => {
-  console.log('deactivated')
-})
-onRenderTracked(() => {
-  console.log('renderTracked')
-})
-onRenderTriggered(() => {
-  console.log('renderTriggered')
-})
-onWatcherCleanup(() => {
-  console.log('watcherCleanup')
-})
-onErrorCaptured(() => {
-  console.log('errorCaptured')
+  // console.log('dom đã được cập nhật lại !')
+  console.log('dom update xong :', stateData.count, stateData.isEven)
 })
 
-function updateCount() {
-  count.value++
+function updateCount(isIncrease: boolean) {
+  const message = isIncrease ? 'tăng' : 'giảm'
+  if (!isIncrease) {
+    count.value = count.value - 2
+  } else count.value++
+  console.log('count trước khi  ' + message, count.value, typeof count.value)
+  console.log('count sau khi ' + message, count.value, typeof count.value)
+}
+
+/**
+ * @note: sau khi các hook render dom chạy xong thì hàm của input mới chạy tới
+ * và giá trị lúc này là giá trị mới nhất .
+ */
+function eventPress(event: Event) {
+  console.log('eventPress event', event.target.value)
 }
 </script>
 
 <template>
-  <div class="">
-    <button class="btn-click" @click="updateCount">update count</button>
-    <button class="btn-click" @click="navigateOtherPage">Navigate</button>
-    <h1>home count: {{ count }}</h1>
+  <div class="btn-group">
+    <button class="btn-click" @click="updateCount(true)">count++</button>
+    <button class="btn-click" @click="updateCount(false)">count--</button>
+    <button class="btn-click" @click="navigateToDashboard">Navigate to dashboard</button>
+    <div>
+      <p>home count</p>
+      <input @keyup="eventPress($event)" v-model="count" />
+      <time :title="'time'" :datetime="'DD/MM/YYYY'"></time>
+      <h3>là số {{ isEven ? 'chẵn' : 'lẻ' }}</h3>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.btn-group {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  height: 20px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
 .btn-click {
   padding: 20px;
   border: none;
@@ -125,5 +141,9 @@ function updateCount() {
   font-size: 15px;
   font-style: italic;
   outline: 0;
+
+  &:first-child {
+    margin-left: 0;
+  }
 }
 </style>
