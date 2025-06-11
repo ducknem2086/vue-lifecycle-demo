@@ -1,21 +1,25 @@
-<script setup lang="ts">
-import { onBeforeMount, onMounted } from 'vue'
+<script>
+import { ref } from 'vue'
 
-defineProps<{
-  count: number
-}>()
-onBeforeMount(() => {
-  console.log('beforeMount children !')
-})
-onMounted(() => {
-  console.log('Component children mounted.')
-})
+export default {
+  setup() {
+    const count = ref(0)
+    //
+    // expose to template and other options API hooks
+    return {
+      count
+    }
+  },
+
+  mounted() {
+    console.log(this.count) // 0
+  }
+}
 </script>
-
 <template>
-  <div>
-    <h1>count from parent: {{ count }}}</h1>
-  </div>
+  <button @click="count++">{{ count }}</button>
 </template>
 
-<style scoped></style>
+<style>
+
+</style>

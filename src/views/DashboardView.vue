@@ -1,15 +1,12 @@
 <script setup lang="ts">
-defineProps<{
-  title: string
-  content: string
-}>()
+import HomeChild from './HomeChildView.vue'
+
 </script>
 
 <template>
   <div>
     <h1>dashboard view work !</h1>
-    <p>{{ content }}</p>
-    <p>{{ title }}</p>
+    <HomeChild/>
   </div>
 </template>
 

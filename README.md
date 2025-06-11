@@ -6,14 +6,33 @@
 - Là nơi khai báo logic với Composition API (reactive, ref, computed...)
 - Không thể truy cập DOM hoặc `this` tại đây
 - p/s : có 2 cách viết hàm setup này với trường hợp viết hết css và js ở trong 1 file component.vue:
-
-    ```ts
-    <script>
-     setup(){
-     }
-    </script>
-      và
-    <script setup></script>
+    - note:
+      Các lifecycle hook đều được dùng bên trong `setup()` dưới dạng hàm:
+      ```ts
+      <script>
+      import { onMounted, onUnmounted } from 'vue';
+  
+      setup() {
+        onMounted(() => {
+          console.log('Component đã mount');
+        });
+  
+        onUnmounted(() => {
+          console.log('Component đã bị hủy');
+        });
+      }
+      </script>
+      chỗ này còn có cách viết khác như sau : 
+      <script setup lang="ts">
+        import {  onUnmounted,onMounted } from 'vue'
+        
+        onMounted(()=>{
+            console.log('component đã mount !')  
+        });
+        onUnmounted(()=>{
+          console.log('component đã unmounted !')
+        })
+      </script>
 
 ---
 
@@ -56,20 +75,5 @@
 - Component đã bị **xóa khỏi cây DOM**
 - Xác nhận hoàn tất việc gỡ bỏ
 
----
 
-## Ghi chú:
 
-- Các lifecycle hook đều được dùng bên trong `setup()` dưới dạng hàm:
-  ```ts
-  import { onMounted, onUnmounted } from 'vue';
-
-  setup() {
-    onMounted(() => {
-      console.log('Component đã mount');
-    });
-
-    onUnmounted(() => {
-      console.log('Component đã bị hủy');
-    });
-  }
