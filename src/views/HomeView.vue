@@ -13,7 +13,7 @@ import {
 } from 'vue'
 import router from '@/router'
 
-const count: Ref<string> = ref('0')
+const count: Ref<number> = ref(0)
 const isEven = computed(() => {
   return count.value % 2 === 0
 })
@@ -22,10 +22,20 @@ const stateData = reactive({
   isEven,
 })
 
-function mountEvent(param: string): number {
-  console.log('value khi chay vao hook', count.value)
-  count.value++
-  console.log('xu li o trong hook ' + param + ' xong:', count.value)
+/**
+ * hàm mount test hook
+ * @param param tên hook / event truyền vào
+ * @param decrease true : tăng 1, false: giảm 1 , mặc định giảm 1
+ */
+function mountEvent(param: string, decrease?: boolean): void {
+  console.log('value khi chạy vào hook', count.value)
+  if (decrease) {
+    count.value++
+  } else {
+    count.value--
+  }
+  const title = 'sau khi đã tăng' + decrease ? 'tăng 1' : 'giảm 1'
+  console.log('xử lí ở trong hook ' + param + ' xong:', count.value, title)
 }
 
 /**
@@ -78,16 +88,13 @@ onBeforeUpdate(() => {
  * chỗ này chạy khi component đã update dom xong
  */
 onUpdated(() => {
-  // console.log('dom đã được cập nhật lại !')
   console.log('dom update xong :', stateData.count, stateData.isEven)
 })
 
 function updateCount(isIncrease: boolean) {
   const message = isIncrease ? 'tăng' : 'giảm'
-  if (!isIncrease) {
-    count.value = count.value - 2
-  } else count.value++
   console.log('count trước khi  ' + message, count.value, typeof count.value)
+  mountEvent('click button', isIncrease)
   console.log('count sau khi ' + message, count.value, typeof count.value)
 }
 
@@ -96,15 +103,17 @@ function updateCount(isIncrease: boolean) {
  * và giá trị lúc này là giá trị mới nhất .
  */
 function eventPress(event: Event) {
-  console.log('eventPress event', event.target.value)
+  console.log('eventPress event', event?.target?.value ?? '')
 }
 </script>
 
 <template>
-  <div class="btn-group">
-    <button class="btn-click" @click="updateCount(true)">count++</button>
-    <button class="btn-click" @click="updateCount(false)">count--</button>
-    <button class="btn-click" @click="navigateToDashboard">Navigate to dashboard</button>
+  <div class="background-home-view">
+    <div class="btn-group">
+      <button @click="updateCount(true)">count++</button>
+      <button @click="updateCount(false)">count--</button>
+      <button @click="navigateToDashboard">Navigate to dashboard</button>
+    </div>
     <div>
       <p>home count</p>
       <input @keyup="eventPress($event)" v-model="count" />
@@ -119,9 +128,10 @@ function eventPress(event: Event) {
   display: flex;
   flex-direction: row;
   gap: 20px;
-  height: 20px;
   flex-wrap: wrap;
   justify-content: flex-start;
+  min-height: max-content;
+  margin: 20px 0;
 }
 
 .btn-click {
@@ -136,7 +146,6 @@ function eventPress(event: Event) {
     rgba(87, 199, 133, 1) 50%,
     rgba(237, 221, 83, 1) 100%
   );
-  color: black;
   font-weight: 500;
   font-size: 15px;
   font-style: italic;
@@ -144,6 +153,17 @@ function eventPress(event: Event) {
 
   &:first-child {
     margin-left: 0;
+  }
+}
+
+* {
+  color: white;
+}
+
+@media screen and (min-width: 1200px) {
+  .background-home-view {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

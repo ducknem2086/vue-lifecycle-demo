@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import HomeChild from './HomeChildView.vue'
+import HomeChildView from '@/views/HomeChildView.vue'
 
-const { title = '', content = '' } =
-  defineProps <{
-    title?: string
-    content?: string
-  }>()
+const { title = '', content = '' } = defineProps<{
+  title?: string
+  content?: string
+}>()
 </script>
 
 <template>
-  <div>
-    <h1>dashboard view work !</h1>
+  <v-container>
+    <h1>Dashboard view work !</h1>
     <p>{{ content }}</p>
     <p>{{ title }}</p>
-    <HomeChild />
-  </div>
+    <HomeChildView />
+  </v-container>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+
+</style>

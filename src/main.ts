@@ -1,14 +1,36 @@
 import './assets/main.css'
-
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
+import 'vuetify/styles'
+import './assets/vuetify-custom.scss'
 import App from './App.vue'
 import router from './router'
+import { createVuetify } from 'vuetify/framework'
 
 const app = createApp(App)
 
-app.use(createPinia())
-app.use(router)
+// 🟦 Custom theme with new primary color
+const myCustomLightTheme = {
+  dark: false,
+  colors: {
+    primary: '#4CAF50', // ✅ your new primary color (e.g., green)
+    secondary: '#03A9F4', // optional
+    error: '#FF5252', // optional
+    background: '#222222',
+  },
+}
 
-app.mount('#app')
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: 'myCustomLightTheme',
+    themes: {
+      myCustomLightTheme,
+    },
+  },
+})
+
+app.use(createPinia()).use(router).use(vuetify).mount('#app')
