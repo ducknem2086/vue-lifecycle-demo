@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 export interface ITodoItem {
   id: string
   content: string
+  status: boolean
 }
 
 export const useTodoStore = defineStore('todo', () => {
@@ -35,6 +36,19 @@ export const useTodoStore = defineStore('todo', () => {
     todo.value = []
   }
 
+  function doneAllTask() {
+    todo.value.forEach((task) => {
+      task.status = true
+    })
+  }
+
+  function setTaskStatus(id: string, status: boolean) {
+    const taskFind = [...todo.value].find((value) => value.id === id)
+    if (taskFind) {
+      taskFind.status = status
+    }
+  }
+
   return {
     todo,
     count,
@@ -42,5 +56,7 @@ export const useTodoStore = defineStore('todo', () => {
     updateTodo,
     deleteTodo,
     createTodo,
+    doneAllTask,
+    setTaskStatus,
   }
 })

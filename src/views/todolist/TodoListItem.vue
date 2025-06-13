@@ -10,16 +10,21 @@
 }
 </style>
 <template>
-  <v-row>
-    <v-col class="v-col-8">
+  <v-row class="bg-orange-accent-2 rounded">
+    <v-col class="v-col-12">
       <!--      <input class="text-red" ref="inputElement" :value="props.currentTodo.content" />-->
       <v-text-field ref="inputElement" :model-value="props.currentTodo.content"></v-text-field>
     </v-col>
     <!--      <input class="text-red" ref="inputElement" :value="props.currentTodo.content" />-->
     <!--      <h1>{{ props.currentTodo.content }}</h1>-->
-    <v-col class="v-col-4 btn-group">
-      <v-btn class="pa-2" color="primary" @click="updateTodo">Update</v-btn>
-      <v-btn class="pa-2" color="error" @click="removeTodo">Delete</v-btn>
+    <v-col class="v-col-12 btn-group">
+      <v-btn @click.stop="toggleTaskStatus">
+        {{ !props.currentTodo.status ? 'done' : 'todo'}}
+      </v-btn>
+      <v-btn v-if="props.isUpdate" class="pa-2" color="primary" @click.stop="updateTodo"
+        >Update
+      </v-btn>
+      <v-btn class="pa-2" color="error" @click.stop="removeTodo">Delete</v-btn>
     </v-col>
   </v-row>
 </template>
@@ -32,16 +37,26 @@ const inputRef = useTemplateRef('inputElement')
 
 const props = defineProps<{
   currentTodo: ITodoItem
+  isUpdate?: boolean
 }>()
+
 /**
- * chỗ này value từ store với value của
+ * chỗ này trigger khi value của props được thay dổi
  */
 watchEffect(() => {
   console.log('props changed:', props.currentTodo.content)
 })
+
 const emit = defineEmits<{
   (event: 'update', data: ITodoItem): void
   (event: 'delete', id: string): void
+  (
+    event: 'setStatus',
+    data: {
+      id: string
+      status: boolean
+    },
+  ): void
 }>()
 
 function updateTodo(): void {
@@ -53,6 +68,17 @@ function updateTodo(): void {
   emit('update', {
     content: inputRef?.value?.value ?? '',
     id: props.currentTodo.id,
+  })
+}
+
+/**
+ * hàm này là set lại status ngược lại với status ban đầu của task
+ */
+function toggleTaskStatus(): void {
+  const id = props.currentTodo.id
+  emit('setStatus', {
+    id,
+    status: !props.currentTodo.status,
   })
 }
 

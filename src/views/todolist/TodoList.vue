@@ -17,35 +17,86 @@
 
 <template>
   <v-container>
-    <v-row class="px-4 bg-todo-create">
-      <v-col class="v-col-8">
-        <v-text-field v-model="inputCreateTodo"></v-text-field>
+    <v-row>
+      <v-col class="v-col-7 v-col-xl-8">
+        <v-row class="bg-todo-create">
+          <v-col class="v-col-auto">
+            <pre>task not done: {{ reactiveData.lengthNotDone }}</pre>
+            <v-btn-group class="ga-3">
+              <v-btn class="pa-2" color="primary" @click="doneAllTask">done all</v-btn>
+              <v-btn class="pa-2" color="primary" @click="createTodo">create</v-btn>
+              <v-btn class="pa-2" color="primary" @click="removeAllTodo">reset</v-btn>
+            </v-btn-group>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="v-col-12 pa-0">
+            <v-text-field
+              style="width: 100%"
+              placeholder="nhập task cần done"
+              v-model="inputCreateTodo"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
+        <template v-for="(item, index) in listTodoNotDone" :key="item.id">
+          <todo-list-item
+            @delete="deleteTodo"
+            @update="updateTodo"
+            @setStatus="toggleTaskStatus"
+            :isUpdate="true"
+            :currentTodo="item"
+          ></todo-list-item>
+          <v-divider
+            v-if="index !== reactiveData.lengthNotDone - 1"
+            :thickness="1"
+            class="py-2 border-opacity-100"
+            color="success"
+          ></v-divider>
+        </template>
       </v-col>
-      <v-col class="v-col-4 btn-group">
-        <v-btn class="pa-2" color="primary" @click="createTodo">create</v-btn>
-        <v-btn class="pa-2" color="primary" @click="removeAllTodo">reset</v-btn>
+      <v-col class="v-col-5 v-col-xl-4 text-center">
+        <pre>task done: {{ reactiveData.lengthDone }}</pre>
+        <v-container v-for="(item, index) in listTodoAsDone" :key="item.id">
+          <todo-list-item
+            @delete="deleteTodo"
+            @update="updateTodo"
+            @setStatus="toggleTaskStatus"
+            :currentTodo="item"
+          ></todo-list-item>
+          <v-divider
+            v-if="index !== reactiveData.lengthNotDone - 1"
+            :thickness="1"
+            class="py-2 border-opacity-100"
+            color="success"
+          ></v-divider>
+        </v-container>
       </v-col>
     </v-row>
-    <v-container v-for="item in listTodo" :key="item.id">
-      <todo-list-item
-        @delete="deleteTodo"
-        @update="updateTodo"
-        :currentTodo="item"
-      ></todo-list-item>
-    </v-container>
   </v-container>
 </template>
 <script setup lang="ts">
 import { type ITodoItem, useTodoStore } from '@/stores/todo'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, reactive, ref, watchEffect } from 'vue'
 import TodoListItem from '@/views/todolist/TodoListItem.vue'
 
 const store = useTodoStore()
-const listTodo = computed(() => {
-  return store.todo
+const listTodoNotDone = computed(() => {
+  return store.todo.filter((x) => !x.status)
 })
+const listTodoAsDone = computed(() => {
+  return store.todo.filter((x) => x.status)
+})
+
+const reactiveData = reactive({
+  lengthDone: listTodoNotDone.value.length,
+  lengthNotDone: listTodoAsDone.value.length,
+})
+
 watchEffect(() => {
-  console.log(listTodo.value)
+  reactiveData.lengthDone = listTodoAsDone.value.length
+  reactiveData.lengthNotDone = listTodoNotDone.value.length
+  console.log('effect run ________')
 })
 
 const inputCreateTodo = ref<string>('')
@@ -64,7 +115,10 @@ function uuidv4(): string {
 /**
  * tạo todo item mới và xoá value ở ô input
  */
-function createTodo() {
+function createTodo(): void {
+  if (!inputCreateTodo.value.length) {
+    return
+  }
   store.createTodo({
     id: uuidv4(),
     content: inputCreateTodo?.value ?? '',
@@ -72,16 +126,24 @@ function createTodo() {
   inputCreateTodo.value = ''
 }
 
-function updateTodo(data: ITodoItem) {
+function updateTodo(data: ITodoItem): void {
   console.log('emit data:', data)
   store.updateTodo(data)
 }
 
-function deleteTodo(id: string) {
+function deleteTodo(id: string): void {
   store.deleteTodo(id)
 }
 
-function removeAllTodo() {
+function removeAllTodo(): void {
   store.resetAllTodo()
+}
+
+function doneAllTask(): void {
+  store.doneAllTask()
+}
+
+function toggleTaskStatus({ id, status }: { id: string; status: boolean }): void {
+  store.setTaskStatus(id, status)
 }
 </script>
