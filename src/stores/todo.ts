@@ -27,7 +27,7 @@ export const useTodoStore = defineStore('todo', () => {
 
   function deleteTodo(id: string) {
     const findIndex = [...todo.value].findIndex((value) => value.id === id)
-    if (findIndex) {
+    if (findIndex !== -1) {
       todo.value.splice(findIndex, 1)
     }
   }

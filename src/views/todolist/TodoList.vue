@@ -20,13 +20,12 @@
     <v-row>
       <v-col class="v-col-7 v-col-xl-8">
         <v-row class="bg-todo-create">
-          <v-col class="v-col-auto">
-            <pre>task not done: {{ reactiveData.lengthNotDone }}</pre>
-            <v-btn-group class="ga-3">
+          <v-col class="v-col-auto d-inline-flex justify-center align-center ga-3">
+            <div>task not done: {{ reactiveData.lengthNotDone }}</div>
+            <div class="d-inline-flex ga-3">
               <v-btn class="pa-2" color="primary" @click="doneAllTask">done all</v-btn>
-              <v-btn class="pa-2" color="primary" @click="createTodo">create</v-btn>
               <v-btn class="pa-2" color="primary" @click="removeAllTodo">reset</v-btn>
-            </v-btn-group>
+            </div>
           </v-col>
         </v-row>
         <v-row>
@@ -35,11 +34,12 @@
               style="width: 100%"
               placeholder="nhập task cần done"
               v-model="inputCreateTodo"
+              @keyup.enter="createTodo"
             ></v-text-field>
           </v-col>
         </v-row>
 
-        <template v-for="(item, index) in listTodoNotDone" :key="item.id">
+        <template v-for="item in listTodoNotDone" :key="item.id">
           <todo-list-item
             @delete="deleteTodo"
             @update="updateTodo"
@@ -47,30 +47,30 @@
             :isUpdate="true"
             :currentTodo="item"
           ></todo-list-item>
-          <v-divider
-            v-if="index !== reactiveData.lengthNotDone - 1"
-            :thickness="1"
-            class="py-2 border-opacity-100"
-            color="success"
-          ></v-divider>
+          <!--          <v-divider-->
+          <!--            v-if="index !== reactiveData.lengthNotDone - 1"-->
+          <!--            :thickness="1"-->
+          <!--            class="py-2 border-opacity-100"-->
+          <!--            color="success"-->
+          <!--          ></v-divider>-->
         </template>
       </v-col>
       <v-col class="v-col-5 v-col-xl-4 text-center">
         <pre>task done: {{ reactiveData.lengthDone }}</pre>
-        <v-container v-for="(item, index) in listTodoAsDone" :key="item.id">
-          <todo-list-item
-            @delete="deleteTodo"
-            @update="updateTodo"
-            @setStatus="toggleTaskStatus"
-            :currentTodo="item"
-          ></todo-list-item>
-          <v-divider
-            v-if="index !== reactiveData.lengthNotDone - 1"
-            :thickness="1"
-            class="py-2 border-opacity-100"
-            color="success"
-          ></v-divider>
-        </v-container>
+          <v-container v-for="item in listTodoAsDone" :key="item.id" class="py-0">
+            <todo-list-item
+              @delete="deleteTodo"
+              @update="updateTodo"
+              @setStatus="toggleTaskStatus"
+              :currentTodo="item"
+            ></todo-list-item>
+            <!--          <v-divider-->
+            <!--            v-if="index !== reactiveData.lengthNotDone - 1"-->
+            <!--            :thickness="1"-->
+            <!--            class="py-2 border-opacity-100"-->
+            <!--            color="success"-->
+            <!--          ></v-divider>-->
+          </v-container>
       </v-col>
     </v-row>
   </v-container>
@@ -132,6 +132,7 @@ function updateTodo(data: ITodoItem): void {
 }
 
 function deleteTodo(id: string): void {
+  console.log('emit data:', id)
   store.deleteTodo(id)
 }
 
