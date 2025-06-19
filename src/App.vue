@@ -4,14 +4,15 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <v-responsive class="border rounded">
-    <v-app class="bg-shades-black pa-5">
+    <v-app class="bg-shades-black px-5 py-2">
       <v-main>
         <header class="custom-header">
-          <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-          <nav>
+<!--          <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />-->
+          <nav class="px-3 mb-3">
             <RouterLink to="/home">Life cycle hook</RouterLink>
             <RouterLink to="/dashboard">Dashboard</RouterLink>
             <RouterLink to="/todolist">TodoList with animation</RouterLink>
+            <RouterLink to="/table">Table component</RouterLink>
           </nav>
         </header>
         <RouterView />

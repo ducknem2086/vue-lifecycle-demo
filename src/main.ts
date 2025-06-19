@@ -8,6 +8,8 @@ import './assets/vuetify-custom.scss'
 import App from './App.vue'
 import router from './router'
 import { createVuetify } from 'vuetify/framework'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const app = createApp(App)
 
@@ -33,4 +35,9 @@ const vuetify = createVuetify({
   },
 })
 
-app.use(createPinia()).use(router).use(vuetify).mount('#app')
+app
+  .use(createPinia())
+  .component('VueDatePicker', VueDatePicker)
+  .use(router)
+  .use(vuetify)
+  .mount('#app')

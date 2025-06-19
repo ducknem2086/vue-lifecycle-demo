@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start:dev": "vite",
+    "start:dev": "vite --port=1111",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -15,6 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^11.0.2",
     "gsap": "^3.13.0",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
