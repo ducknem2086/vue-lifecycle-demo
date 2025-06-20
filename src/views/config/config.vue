@@ -1,20 +1,18 @@
 <script lang="ts" setup>
-import { effect, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import ConfigType from '@/views/config-type/config-type.vue'
 import ConfigCreate from '@/views/config/config-create.vue'
+import { formatDate } from '@/shared/util.ts'
 
 const listConfig = ref<any[]>([])
 
 const apiLink = 'http://localhost:4000'
 const page = ref(1)
-const itemsPerPage = 3
+const itemsPerPage = 10
 
-effect(
-  () => listConfig.value.length,
-  (prev, next) => {
-    console.log(prev, next)
-  },
-)
+watch(listConfig, (next, prev) => {
+  console.log(next.length, prev.length)
+})
 onBeforeMount(() => {
   getConfig()
 })
@@ -22,8 +20,6 @@ onBeforeMount(() => {
 function goToPage(pageNum: number) {
   page.value = pageNum
 }
-
-function addConfig(): void {}
 
 function getConfig(): void {
   const myHeaders = new Headers()
@@ -38,83 +34,106 @@ function getConfig(): void {
     .then((response) => response.json())
     .then((res) => {
       // res as  stringify
-      listConfig.value = res
+      listConfig.value = res.map((x: any) => {
+        return {
+          ...x,
+          dateTo: formatDate(new Date(x.dateTo)),
+          dateFrom: formatDate(new Date(x.dateFrom)),
+        }
+      })
     })
     .catch((error) => console.error(error))
 }
 
-function deleteConfig(id: string): void {
+async function deleteConfig({ key }: any): void {
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
   const requestOptions = {
     method: 'DELETE',
     headers: myHeaders,
   }
-  fetch(apiLink + `/config/${id}`, requestOptions)
-    .then((response) => response.json())
-    .then((res) => {
-      console.log(res)
+  await fetch(apiLink + `/config/${key}`, requestOptions)
+    .then((response) => {
+      getConfig()
     })
     .catch((error) => console.error(error))
 }
 </script>
 
 <template>
-  <div class="d-inline-flex ga-3 mb-3">
-    <!--    <button @click="addConfig" class="px-4 rounded-xl bg-red-darken-2">Add Config</button>-->
+  <!--    <button @click="addConfig" class="px-4 rounded-xl bg-red-darken-2">Add Config</button>-->
+  <v-container>
+
     <v-row>
-      <v-col class="col-4">
+      <v-col class="v-col-4">
         <div class="d-inline-flex ga-3">
           <config-type></config-type>
         </div>
       </v-col>
-      <v-col class="col-8">
-        <config-create></config-create>
+      <v-col class="v-col-8">
+        <config-create :linkApi="apiLink" @getListConfig="getConfig"></config-create>
       </v-col>
     </v-row>
-  </div>
-  <v-data-table
-    :items="listConfig"
-    density="compact"
-    :items-per-page="itemsPerPage"
-    item-key="id"
-    v-model:page="page"
-    class="elevation-1"
-  >
-    <template #item.action="{ item }">
-      <v-btn color="primary" @click="deleteConfig(item)">Edit</v-btn>
-    </template>
+  </v-container>
+  <v-container>
+    <v-row>
+      <v-col>
+        <v-data-table
+          :items="listConfig"
+          density="compact"
+          :items-per-page="itemsPerPage"
+          item-key="id"
+          show-expand
+          v-model:page="page"
+          item-value="id"
+          class="elevation-1"
+        >
+          <template v-slot:item.data-table-expand="{ internalItem }">
+            <v-btn
+              color="medium-emphasis p-0"
+              size="small"
+              variant="text"
+              border
+              slim
+              @click="deleteConfig(internalItem)"
+            >
+              <span class="text-red">Delete</span>
+            </v-btn>
+          </template>
 
-    <!-- Custom pagination slot -->
-    <template #bottom="{ pageCount, page, itemsPerPage }">
-      <div class="d-flex justify-space-between align-center pa-4">
-        <div>
-          Page {{ page }} of {{ pageCount }}, items per page: {{ itemsPerPage }}, total:
-          {{ listConfig.length }}
-        </div>
+          <!-- Custom pagination slot -->
+          <template #bottom="{ pageCount, page, itemsPerPage }">
+            <div class="d-flex justify-space-between align-center pa-4">
+              <div>
+                Page {{ page }} of {{ pageCount }}, items per page: {{ itemsPerPage }}, total:
+                {{ listConfig.length }}
+              </div>
 
-        <div>
-          <v-btn
-            color="primary"
-            variant="outlined"
-            :disabled="page <= 1"
-            class="mr-2"
-            @click="goToPage(page - 1)"
-          >
-            Prev
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="outlined"
-            :disabled="page >= pageCount"
-            @click="goToPage(page + 1)"
-          >
-            Next
-          </v-btn>
-        </div>
-      </div>
-    </template>
-  </v-data-table>
+              <div>
+                <v-btn
+                  color="primary"
+                  variant="outlined"
+                  :disabled="page <= 1"
+                  class="mr-2"
+                  @click="goToPage(page - 1)"
+                >
+                  Prev
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  variant="outlined"
+                  :disabled="page >= pageCount"
+                  @click="goToPage(page + 1)"
+                >
+                  Next
+                </v-btn>
+              </div>
+            </div>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style lang="scss"></style>

@@ -36,8 +36,9 @@ const vuetify = createVuetify({
 })
 
 app
+  .use(vuetify)
   .use(createPinia())
   .component('VueDatePicker', VueDatePicker)
   .use(router)
-  .use(vuetify)
+
   .mount('#app')

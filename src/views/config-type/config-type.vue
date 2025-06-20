@@ -9,6 +9,9 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 
+defineEmits<{
+  (event: 'getListConfigType'): void
+}>()
 const form = reactive({
   name: '',
 })
@@ -46,8 +49,8 @@ function submitForm() {
   }
   fetch(apiLink + `/configType`, requestOptions)
     .then((response) => response.json())
-    .then((res) => {
-      console.log(res)
+    .then(() => {
+      form.name = ''
     })
     .catch((error) => console.error(error))
 }
