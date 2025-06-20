@@ -7,23 +7,23 @@ const router = createRouter({
     {
       path: '/',
       redirect() {
-        return '/table'
-      }
+        return '/config'
+      },
     },
     {
-      path: '/table',
+      path: '/config',
       name: 'table',
-      component: () => import('@/views/table/table.vue')
+      component: () => import('@/views/config/config.vue'),
     },
     {
       path: '/home',
       name: 'home',
-      component: HomeView
+      component: HomeView,
     },
     {
       path: '/todolist',
       name: 'todoList',
-      component: () => import('../views/todolist/TodoList.vue')
+      component: () => import('../views/todolist/TodoList.vue'),
     },
     {
       path: '/dashboard',
@@ -34,9 +34,9 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue'),
       beforeEnter: () => {
         console.log('router init !!!')
-      }
-    }
-  ]
+      },
+    },
+  ],
 })
 
 export default router

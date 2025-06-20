@@ -12,7 +12,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <RouterLink to="/home">Life cycle hook</RouterLink>
             <RouterLink to="/dashboard">Dashboard</RouterLink>
             <RouterLink to="/todolist">TodoList with animation</RouterLink>
-            <RouterLink to="/table">Table component</RouterLink>
+            <RouterLink to="/config">config component</RouterLink>
           </nav>
         </header>
         <RouterView />

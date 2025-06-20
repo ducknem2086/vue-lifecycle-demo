@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { effect, onBeforeMount, ref } from 'vue'
+import ConfigType from '@/views/config-type/config-type.vue'
+import ConfigCreate from '@/views/config/config-create.vue'
 
 const listConfig = ref<any[]>([])
 
@@ -58,19 +60,18 @@ function deleteConfig(id: string): void {
 </script>
 
 <template>
-  <div class="d-inline-flex flex-column ga-3 mb-3">
-    <h1>form config:</h1>
+  <div class="d-inline-flex ga-3 mb-3">
     <!--    <button @click="addConfig" class="px-4 rounded-xl bg-red-darken-2">Add Config</button>-->
-    <div class="d-inline-flex ga-3">
-      <v-sheet class="mx-auto" width="300">
-        <v-form fast-fail @submit.prevent>
-          <v-text-field label="First name"></v-text-field>
-          <v-text-field label="First name"></v-text-field>
-          <v-text-field label="Last name"></v-text-field>
-          <v-btn class="mt-2" type="submit" block>Submit</v-btn>
-        </v-form>
-      </v-sheet>
-    </div>
+    <v-row>
+      <v-col class="col-4">
+        <div class="d-inline-flex ga-3">
+          <config-type></config-type>
+        </div>
+      </v-col>
+      <v-col class="col-8">
+        <config-create></config-create>
+      </v-col>
+    </v-row>
   </div>
   <v-data-table
     :items="listConfig"

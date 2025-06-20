@@ -41,7 +41,6 @@ import type { ITodoItem } from '@/stores/todo.ts'
 import { useTemplateRef, watchEffect } from 'vue'
 
 const inputRef = useTemplateRef('inputElement')
-
 const props = defineProps<{
   currentTodo: ITodoItem
   isUpdate?: boolean
