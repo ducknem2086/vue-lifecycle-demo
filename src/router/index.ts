@@ -6,10 +6,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      // redirect() {
-      //   return '/config'
-      // },
       component: () => import('@/views/config/config.vue'),
+      // component: () => import('../views/todolist/TodoList.vue'),
     },
     {
       path: '/config',
@@ -22,7 +20,7 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/todolist',
+      path: '/config',
       name: 'todoList',
       component: () => import('../views/todolist/TodoList.vue'),
     },

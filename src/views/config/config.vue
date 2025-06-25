@@ -9,13 +9,29 @@ const listConfig = ref<any[]>([])
 const apiLink = 'http://localhost:4000'
 const page = ref(1)
 const itemsPerPage = 10
-
+const listConfigType = ref<any[]>([])
 watch(listConfig, (next, prev) => {
   console.log(next.length, prev.length)
 })
 onBeforeMount(() => {
   getConfig()
 })
+
+function getListConfigType(): void {
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+  const requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+  }
+  fetch(apiLink + `/configType`, requestOptions)
+    .then((response) => response.json())
+    .then((res) => {
+      listConfigType.value = res[0]
+      console.log(res)
+    })
+    .catch((error) => console.error(error))
+}
 
 function goToPage(pageNum: number) {
   page.value = pageNum
@@ -61,22 +77,28 @@ async function deleteConfig({ key }: any): void {
 </script>
 
 <template>
-  <!--    <button @click="addConfig" class="px-4 rounded-xl bg-red-darken-2">Add Config</button>-->
   <v-container>
     <v-row>
       <v-col class="v-col-4">
         <div class="d-inline-flex ga-3">
-          <config-type></config-type>
+          <config-type @getListConfigType="getListConfigType"></config-type>
         </div>
       </v-col>
       <v-col class="v-col-8">
-        <config-create :linkApi="apiLink" @getListConfig="getConfig"></config-create>
+        <config-create
+          :linkApi="apiLink"
+          :listConfigType="listConfigType"
+          @getListConfigType="getListConfigType"
+          @getListConfig="getConfig"
+        ></config-create>
       </v-col>
     </v-row>
   </v-container>
   <v-container>
     <v-row>
-      <v-col>table list config</v-col>
+      <v-col class="text-center">
+        <h2>Table list config</h2>
+      </v-col>
     </v-row>
     <v-row>
       <v-col>
@@ -92,7 +114,8 @@ async function deleteConfig({ key }: any): void {
         >
           <template v-slot:item.data-table-expand="{ internalItem }">
             <v-btn
-              color="medium-emphasis p-0"
+              class="text-yellow"
+              color="primary"
               size="small"
               variant="text"
               border

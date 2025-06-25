@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start:dev": "vite --port=1111",
+    "dev": "vite --port=1111",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -15,10 +15,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@primeuix/themes": "^1.1.2",
     "@vuepic/vue-datepicker": "^11.0.2",
     "gsap": "^3.13.0",
     "path": "^0.12.7",
     "pinia": "^3.0.1",
+    "primevue": "^4.3.5",
     "single-spa-vue": "^3.0.1",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.13",

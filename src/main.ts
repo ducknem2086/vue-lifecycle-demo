@@ -1,25 +1,3 @@
-// const app = createApp(App)
-//
-// // 🟦 Custom theme with new primary color
-
-//
-// app
-//   .use(vuetify)
-//   .use(createPinia())
-//   .component('VueDatePicker', VueDatePicker)
-//   .use(router)
-//
-//   .mount('#app')
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 import { createApp, h } from 'vue'
 import singleSpaVue from 'single-spa-vue'
 
@@ -34,6 +12,7 @@ import router from './router'
 import { createVuetify } from 'vuetify/framework'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 
 const myCustomLightTheme = {
   dark: false,
@@ -41,12 +20,15 @@ const myCustomLightTheme = {
     primary: '#4CAF50', // ✅ your new primary color (e.g., green)
     secondary: '#03A9F4', // optional
     error: '#FF5252', // optional
-    background: '#222222',
+    background: 'white',
   },
 }
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VDateInput,
+  },
   directives,
   theme: {
     defaultTheme: 'myCustomLightTheme',
