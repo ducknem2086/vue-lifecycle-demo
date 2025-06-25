@@ -1,7 +1,31 @@
+// const app = createApp(App)
+//
+// // 🟦 Custom theme with new primary color
+
+//
+// app
+//   .use(vuetify)
+//   .use(createPinia())
+//   .component('VueDatePicker', VueDatePicker)
+//   .use(router)
+//
+//   .mount('#app')
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+import { createApp, h } from 'vue'
+import singleSpaVue from 'single-spa-vue'
+
 import './assets/main.css'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import 'vuetify/styles'
 import './assets/vuetify-custom.scss'
@@ -11,9 +35,6 @@ import { createVuetify } from 'vuetify/framework'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-const app = createApp(App)
-
-// 🟦 Custom theme with new primary color
 const myCustomLightTheme = {
   dark: false,
   colors: {
@@ -35,10 +56,23 @@ const vuetify = createVuetify({
   },
 })
 
-app
-  .use(vuetify)
-  .use(createPinia())
-  .component('VueDatePicker', VueDatePicker)
-  .use(router)
+const vueLifecycles = singleSpaVue({
+  createApp,
+  appOptions: {
+    render() {
+      return h(App, {
+        props: {
+          // single-spa props are available on the "this" object. Forward them to your component as needed.
+          // https://single-spa.js.org/docs/building-applications#lifecyle-props
+        },
+      })
+    },
+  },
+  handleInstance(app) {
+    app.use(vuetify).use(createPinia()).component('VueDatePicker', VueDatePicker).use(router)
+  },
+})
 
-  .mount('#app')
+export const bootstrap = vueLifecycles.bootstrap
+export const mount = vueLifecycles.mount
+export const unmount = vueLifecycles.unmount

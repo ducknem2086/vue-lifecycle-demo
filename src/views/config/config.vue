@@ -63,7 +63,6 @@ async function deleteConfig({ key }: any): void {
 <template>
   <!--    <button @click="addConfig" class="px-4 rounded-xl bg-red-darken-2">Add Config</button>-->
   <v-container>
-
     <v-row>
       <v-col class="v-col-4">
         <div class="d-inline-flex ga-3">
@@ -76,6 +75,9 @@ async function deleteConfig({ key }: any): void {
     </v-row>
   </v-container>
   <v-container>
+    <v-row>
+      <v-col>table list config</v-col>
+    </v-row>
     <v-row>
       <v-col>
         <v-data-table

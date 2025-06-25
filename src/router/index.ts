@@ -6,9 +6,10 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect() {
-        return '/config'
-      },
+      // redirect() {
+      //   return '/config'
+      // },
+      component: () => import('@/views/config/config.vue'),
     },
     {
       path: '/config',
