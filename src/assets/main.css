@@ -1,9 +1,16 @@
 @import './base.css';
+@import 'primeicons/primeicons.css';
+
 
 #app {
   margin: 0;
   font-weight: normal;
 }
+
+* {
+  box-sizing: border-box;
+}
+
 
 a,
 .green {

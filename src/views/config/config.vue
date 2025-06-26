@@ -96,8 +96,8 @@ async function deleteConfig({ key }: any): void {
   </v-container>
   <v-container>
     <v-row>
-      <v-col class="text-center">
-        <h2>Table list config</h2>
+      <v-col class="text-center list-config-title">
+        <div>Table list config</div>
       </v-col>
     </v-row>
     <v-row>
@@ -161,7 +161,13 @@ async function deleteConfig({ key }: any): void {
   </v-container>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.list-config-title {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 30px;
+}
+</style>
 
 <!--beforeCreate: xảy ra trước tất cả các hook ( trước create) -> đại khái là ngay sau bước đọc route-->
 <!--fact : chỗ này đọc được biến global state-->

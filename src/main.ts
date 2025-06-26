@@ -2,6 +2,8 @@ import { createApp, h } from 'vue'
 import singleSpaVue from 'single-spa-vue'
 
 import './assets/main.css'
+
+
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { createPinia } from 'pinia'
@@ -13,6 +15,8 @@ import { createVuetify } from 'vuetify/framework'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { VDateInput } from 'vuetify/labs/VDateInput'
+import PrimeVue from 'primevue/config'
+import Aura from '@primeuix/themes/aura'
 
 const myCustomLightTheme = {
   dark: false,
@@ -51,7 +55,16 @@ const vueLifecycles = singleSpaVue({
     },
   },
   handleInstance(app) {
-    app.use(vuetify).use(createPinia()).component('VueDatePicker', VueDatePicker).use(router)
+    app
+      .use(vuetify)
+      .use(PrimeVue, {
+        theme: {
+          preset: Aura,
+        },
+      })
+      .use(createPinia())
+      .component('VueDatePicker', VueDatePicker)
+      .use(router)
   },
 })
 

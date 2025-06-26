@@ -21,6 +21,9 @@ import { reactive } from 'vue'
 const emit = defineEmits<{
   (event: 'getListConfigType'): void
 }>()
+
+
+
 const form = reactive({
   name: '',
 })
