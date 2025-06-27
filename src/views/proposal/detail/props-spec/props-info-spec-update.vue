@@ -1,37 +1,21 @@
 <template>
   <div class="background-tab">
-    <Tabs value="1">
+    <Tabs value="0">
       <TabList>
         <Tab value="0"><i class="pi pi-file"></i></Tab>
         <Tab value="1"><i class="pi pi-bars"></i></Tab>
       </TabList>
       <TabPanels>
         <TabPanel value="0">
-          <FormGroupInfo></FormGroupInfo>
+          <FormGroupInfo v-model="propUpdate"></FormGroupInfo>
         </TabPanel>
         <TabPanel value="1">
-          <PropsInfoSpecList
-            @setDialogUpdateStatus="openModalFunc"
-            :listPropSpec="[]"
-          ></PropsInfoSpecList>
-          <!--          <div class="background-form-attr">-->
-          <!--            <FormGroupSpecAttr-->
-          <!--              :case="'open'"-->
-          <!--              :showModal="openModal"-->
-          <!--              @submitEvent="submitFormAttr"-->
-          <!--              @closeForm="closeModal($event)"-->
-          <!--            ></FormGroupSpecAttr-->
-          <!--          </div>-->
+          <PropsInfoSpecList @setDialogAttrStatus="openModalAttrId($event)"></PropsInfoSpecList>
+
           <PropsSpecAttrUpdate
+            :spec-id="currentSpecId"
             :showModal="openModal"
-            @setDialogUpdateStatus="setModalInfoStatus"
-            case="open"
-            :data="{}"
-            id=""
-            :attribute="[]"
-            name=""
-            short-description=""
-            description=""
+            @setDialogUpdateStatus="setModalInfoStatus($event)"
           >
           </PropsSpecAttrUpdate>
         </TabPanel>
@@ -45,8 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
-import type { IProposalSpecification } from '@/views/proposal/model/proposal.ts'
+import { onBeforeMount, reactive, ref } from 'vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -56,39 +39,54 @@ import Button from 'primevue/button'
 import PropsInfoSpecList from '@/views/proposal/detail/props-spec/props-info-spec-list.vue'
 import FormGroupInfo from '@/views/proposal/form-control/formGroupInfo.vue'
 import PropsSpecAttrUpdate from '@/views/proposal/detail/props-spec/props-spec-attr/props-spec-attr-update.vue'
+import { usePropsStore } from '@/stores/proposal.ts'
+import type { IProposalItem } from '@/views/proposal/model/proposal.ts'
 
-const props = defineProps<IProposalSpecification>()
 const emitEvent = defineEmits<{
   (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
   (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
+  (event: 'closeForm'): void
 }>()
 
 const openModal = ref(false)
+let propUpdate = reactive<IProposalItem>({
+  code: '',
+  name: '',
+  description: '',
+  groupType: '',
+  proposalSpecification: [],
+  id: '',
+  lastModified: {
+    $date: '',
+  },
+}) // chỗ này nếu để ref nó không ăn, tìm hiểu sau
+const store = usePropsStore()
+const currentSpecId = ref('')
+
+onBeforeMount(() => {
+  if (store.currentProps) {
+    propUpdate = Object.assign({}, store.currentProps)
+    console.log(propUpdate)
+  }
+})
 
 function closeForm() {
-  console.log('closeForm')
+  emitEvent('closeForm')
 }
 
-function setModalInfoStatus(modalStatus: boolean) {
-  openModal.value = modalStatus
+function openModalAttrId(param: { status: boolean; specId: string }) {
+  openModal.value = param.status
+  currentSpecId.value = param.specId
+  console.log(param)
 }
 
-//
-// function submitFormAttr(param: { data: string; pageCase: string }) {
-//   const { data, pageCase } = param
-//   if (pageCase === 'update') {
-//     return
-//   }
-//   console.log(data)
-// }
-
-function openModalFunc(status: boolean) {
+function setModalInfoStatus(status: boolean) {
   openModal.value = status
-  console.log(openModal.value)
 }
 
 function submitDataSpec() {
-  console.log('submit form spec')
+  console.log('submit form spec', propUpdate)
+  store.updateCurrentProps(propUpdate)
 }
 </script>
 

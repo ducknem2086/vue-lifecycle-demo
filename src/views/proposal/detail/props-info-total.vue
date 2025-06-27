@@ -55,7 +55,9 @@ function createAttibute(data: any) {
   console.log('createAttibute', data)
 }
 
-function closeForm() {}
+function closeForm() {
+
+}
 
 function submitForm() {}
 </script>

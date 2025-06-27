@@ -1,31 +1,34 @@
-export interface IProposalGroupItem {
-  state: string
-  proposalSpecification: IProposalSpecification[]
-  name: string
+export interface IProposalItem {
+  // '@type': string
+  // '@baseType': string
   code: string
-  groupType: string
+  name: string
   description: string
+  groupType: string
+  proposalSpecification: ProposalSpecification[]
+  id: string
+  lastModified: LastModified
 }
 
-// export class Proposal implements IProposalGroupItem {
-//   state: string = ''
-//   name: string = ''
-//   code: string = ''
-//   groupType: string = ''
-//   description: string = ''
-//   proposalSpecification = []
-// }
+export interface LastModified {
+  $date: string
+}
 
-export interface IProposalSpecification {
-  attribute: IAttribute[]
+export interface ProposalSpecification {
+  // '@baseType': string
+  // '@schemaLocation': string
+  // '@type': string
+  // '@referredType': string
+  id: string
   name: string
+  index: number
   shortDescription: string
   description: string
-  id: string
+  attribute: Attribute[]
 }
 
-export interface IAttribute {
-  layout: ILayout
+export interface Attribute {
+  layout: Layout
   code: string
   title: string
   dataType: string
@@ -33,12 +36,12 @@ export interface IAttribute {
   index: number
 }
 
-export interface ILayout {
+export interface Layout {
   ctlType: string
-  extInfo: IExtInfo[]
+  extInfo: ExtInfo[] | string
 }
 
-export interface IExtInfo {
+export interface ExtInfo {
   label: string
   value: string
 }

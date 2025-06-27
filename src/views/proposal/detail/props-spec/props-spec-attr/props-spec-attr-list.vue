@@ -1,5 +1,6 @@
 <template>
   <div class="background-list">
+    <p><b>Attribute tab</b></p>
     <div class="background-search">
       <InputText
         placeholder="Press enter to search"
@@ -7,10 +8,10 @@
         @change="searchData($event)"
       ></InputText>
 
-      <Button severity="info"  @click="createSpec()">Create</Button>
+      <Button severity="info" @click="createSpec()">Create</Button>
     </div>
     <div class="background-table">
-      <DataTable :value="mockDataTable">
+      <DataTable :value="store.listAttribute">
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -20,7 +21,7 @@
         <Column :header="'Action'">
           <template #body="{ data }">
             <div class="btn-icon-group">
-              <i :class="'pi pi-pen-to-square'" @click="updateRow"></i>
+              <i :class="'pi pi-pen-to-square'" @click="updateRow(data)"></i>
               <i :class="'pi pi-trash'" @click="deleteRow"></i>
             </div>
           </template>
@@ -31,17 +32,20 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { usePropsStore } from '@/stores/proposal.ts'
 
-const props = defineProps<{
-  listPropSpec: any[]
-}>()
 const emitEvent = defineEmits<{
-  (event: 'setDialogUpdateStatus', status: boolean): void
+  (
+    event: 'setDialogAttrStatus',
+    param: {
+      attrId: string
+      status: boolean
+    },
+  ): void
   (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
   (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
 }>()
@@ -61,15 +65,13 @@ const columns = [
   },
 ]
 
-const mockDataTable = ref([
-  {
-    name: 'test',
-    desc: 'test',
-  },
-])
+const store = usePropsStore()
 
 function createSpec() {
-  emitEvent('setDialogUpdateStatus', true)
+  emitEvent('setDialogAttrStatus', {
+    attrId: '',
+    status: true,
+  })
 }
 
 function searchData(eventSearch: any) {
@@ -78,9 +80,12 @@ function searchData(eventSearch: any) {
 
 function deleteRow() {}
 
-function updateRow(data: any) {
+function updateRow(data?: any) {
   console.log(data)
-  emitEvent('setDialogUpdateStatus', true)
+  emitEvent('setDialogAttrStatus', {
+    attrId: data.code,
+    status: true,
+  })
 }
 </script>
 <style scoped lang="scss">

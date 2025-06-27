@@ -4,7 +4,7 @@
     modal
     header="Proposal Attibute"
     :style="{ width: '25rem', minWidth: 'max-content' }"
-    @update:visible="setDialogStatus($event)"
+    @update:visible="closeForm()"
   >
     <template #header></template>
     <div class="background-attr-form">
@@ -12,13 +12,18 @@
         <label class="background-attr-form-label">{{ control.attribute }}</label>
 
         <template v-if="control.type === 'textfield'">
-          <InputText ref="input" v-model="control.value" class="w-full" placeholder="Enter value" />
+          <InputText
+            ref="input"
+            v-model="attrFormData[control.attribute]"
+            class="w-full"
+            placeholder="Enter value"
+          />
         </template>
 
         <template v-else-if="control.type === 'select'">
           <Dropdown
             :show-clear="true"
-            v-model="control.value"
+            v-model="attrFormData[control.attribute]"
             :options="control.options"
             optionLabel="label"
             optionValue="value"
@@ -32,55 +37,15 @@
             <label> Control Type </label>
             <div>
               <Dropdown
-                v-model="control.layout.ctlType"
+                v-model="attrFormData.layout.ctlType"
                 :options="listOptionLayout"
                 optionLabel="label"
-                @change="clearChildrenValue($event, control)"
+                @change="clearChildrenValue()"
                 optionValue="value"
                 placeholder="Select option"
                 :show-clear="true"
                 class="w-full"
               />
-            </div>
-          </div>
-        </template>
-
-        <template v-if="control.layout && control.layout.ctlType === 'selectLov'">
-          <label>Extra Info</label>
-          <Dropdown
-            v-model="control.layout.extInfo[0].value"
-            :options="listSelectLovLayout"
-            optionLabel="name"
-            optionValue="id"
-            :show-clear="true"
-            placeholder="Select option"
-            class="w-full"
-          />
-        </template>
-        <template v-else-if="control.layout && control.layout.ctlType === 'selectList'">
-          <div class="">
-            <label>Extra Info</label>
-            <div
-              v-for="(item, idx) in control?.layout?.extInfo"
-              :key="idx"
-              class="btn-group-extra-info"
-            >
-              <InputText v-model="item.label" placeholder="Label" class="flex-1" />
-              <InputText v-model="item.value" placeholder="Value" class="flex-1" />
-              <div class="btn-layout-extra-info">
-                <Button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  v-if="idx > 0"
-                  @click="removeListItem(control, idx)"
-                />
-                <Button
-                  v-if="idx === control?.layout?.extInfo?.length - 1"
-                  icon="pi pi-plus"
-                  outlined
-                  @click="addListItem(control)"
-                />
-              </div>
             </div>
           </div>
         </template>
@@ -93,7 +58,7 @@
               class="flex items-center gap-2"
             >
               <RadioButton
-                v-model="control.value"
+                v-model="attrFormData[control.attribute]"
                 :inputId="`${control.attribute}-${option.value}`"
                 :value="option.value"
               />
@@ -112,7 +77,7 @@
               class="flex items-center gap-2"
             >
               <Checkbox
-                v-model="control.value"
+                v-model="attrFormData[control.attribute]"
                 :inputId="`${control.attribute}-${option.value}`"
                 :value="option.value"
               />
@@ -124,13 +89,57 @@
         </template>
 
         <template v-else-if="control.type === 'textarea'">
-          <Textarea v-model="control.value" class="w-full" placeholder="Enter text" rows="4" />
+          <Textarea
+            v-model="attrFormData[control.attribute]"
+            class="w-full"
+            placeholder="Enter text"
+            rows="4"
+          />
         </template>
       </div>
+      <template v-if="attrFormData.layout && attrFormData.layout.ctlType === 'SELECT-LOV'">
+        <label>Extra Info</label>
+        <Dropdown
+          v-model="attrFormData.layout.extInfo[0].value"
+          :options="listSelectLovLayout"
+          optionLabel="name"
+          optionValue="id"
+          :show-clear="true"
+          placeholder="Select option"
+          class="w-full"
+        />
+      </template>
+      <template v-else-if="attrFormData.layout && attrFormData.layout.ctlType === 'SELECT-LIST'">
+        <div class="">
+          <label>Extra Info</label>
+          <div
+            v-for="(item, idx) in attrFormData.layout?.extInfo"
+            :key="idx"
+            class="btn-group-extra-info"
+          >
+            <InputText v-model="(item as any).label" placeholder="Label" class="flex-1" />
+            <InputText v-model="(item as any).value" placeholder="Value" class="flex-1" />
+            <div class="btn-layout-extra-info">
+              <Button
+                icon="pi pi-trash"
+                severity="danger"
+                v-if="idx > 0"
+                @click="removeListItem(attrFormData, idx)"
+              />
+              <Button
+                v-if="idx === attrFormData?.layout?.extInfo?.length - 1"
+                icon="pi pi-plus"
+                outlined
+                @click="addListItem(attrFormData)"
+              />
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
     <template #footer>
       <div class="form-attr-footer">
-        <Button label="Cancel" outlined severity="secondary" @click="setDialogStatus(false)" />
+        <Button label="Cancel" outlined severity="secondary" @click="closeForm" />
         <Button label="Save" severity="info" @click="submitForm" />
       </div>
     </template>
@@ -138,48 +147,74 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, onBeforeMount, reactive } from 'vue'
+import { defineEmits, defineProps, onBeforeMount, reactive, watch } from 'vue'
 import InputText from 'primevue/inputtext'
-import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown'
+import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import type { Attribute } from '@/views/proposal/model/proposal.ts'
+import { usePropsStore } from '@/stores/proposal.ts'
 
 const props = defineProps<{
-  case: 'update' | 'open'
-  data?: any
   showModal?: boolean
+  attrId?: string
 }>()
 
 const emit = defineEmits<{
-  (event: 'submitEvent', data: { data: any; pageCase: string }): void
   (event: 'closeForm'): void
 }>()
+const store = usePropsStore()
 
 const listOptionLayout = [
-  {
-    value: 'textBox',
-    label: 'TextBox',
-  },
-  {
-    value: 'textArea',
-    label: 'TextArea',
-  },
-  {
-    value: 'selectList',
-    label: 'SelectList',
-  },
-  {
-    value: 'selectLov',
-    label: 'SelectLov',
-  },
+  { label: 'TEXTBOX', value: 'TEXTBOX' },
+  { label: 'TEXTAREA', value: 'TEXTAREA' },
+  { label: 'SELECT-LIST', value: 'SELECT-LIST' },
+  { label: 'SELECT-LOV', value: 'SELECT-LOV' },
 ]
 const listSelectLovLayout: {
   id: string
   name: string
 }[] = []
+
+let attrFormData = reactive<Attribute>({
+  layout: {
+    extInfo: [],
+    ctlType: '',
+  },
+  code: '',
+  title: '',
+  dataType: '',
+  value: '',
+  index: 0,
+})
+
+watch(
+  () => props.showModal,
+  () => {
+    console.log(props.attrId)
+    if (props.attrId && !!props.showModal) {
+      const attrData = store.listAttribute.find((x: Attribute) => x.code === props.attrId)
+      if (attrData) {
+        attrFormData = Object.assign({}, attrData)
+      }
+    } else {
+      attrFormData = {
+        layout: {
+          extInfo: [],
+          ctlType: '',
+        },
+        code: '',
+        title: '',
+        dataType: '',
+        value: '',
+        index: 0,
+      }
+    }
+  },
+)
 
 onBeforeMount(() => {
   for (let i = 0; i < 100; i++) {
@@ -242,41 +277,15 @@ const formControls = reactive<
       ctlType: '',
     },
   },
-
-  // {
-  //   attribute: 'Gender',
-  //   type: 'radio',
-  //   value: '',
-  //   options: [
-  //     { label: 'Male', value: 'male' },
-  //     { label: 'Female', value: 'female' },
-  //   ],
-  // },
-  // {
-  //   attribute: 'Interests',
-  //   type: 'checkbox',
-  //   value: [],
-  //   options: [
-  //     { label: 'Sports', value: 'sports' },
-  //     { label: 'Music', value: 'music' },
-  //     { label: 'Travel', value: 'travel' },
-  //   ],
-  // },
-  // {
-  //   attribute: 'Biography',
-  //   type: 'textarea',
-  //   value: '',
-  // },
 ])
 
 // Define dynamic form controls
-function clearChildrenValue(event: DropdownChangeEvent, control: any) {
-  control.layout && (control.layout.extInfo = [{ label: '', value: '' }])
+function clearChildrenValue() {
+  attrFormData?.layout?.extInfo && (attrFormData.layout.extInfo = [{ label: '', value: '' }])
 }
 
 // Functions for list item control
 function addListItem(control: any) {
-  console.log(control)
   control.layout.extInfo.push({ label: '', value: '' })
 }
 
@@ -284,33 +293,21 @@ function removeListItem(control: any, idx: any) {
   control.layout.extInfo.splice(idx, 1)
 }
 
-// Submit form logic
-function setDialogStatus(status: boolean) {
-  emit('closeForm', status)
+function closeForm() {
+  emit('closeForm')
 }
 
 function submitForm() {
-  const formData: any = {}
-  formControls.forEach((ctrl) => {
-    console.log(ctrl.value)
-    if (!ctrl.layout && !ctrl.value) {
-      return
-    }
-    if ('layout' in ctrl) {
-      if (ctrl.layout?.ctlType) {
-        ;(formData as any)[ctrl.attribute] = ctrl.layout
-      } else {
-        ;(formData as any)[ctrl.attribute] = ctrl.value
-      }
-    } else {
-      ;(formData as any)[ctrl.attribute] = ctrl.value
-    }
-  })
-  if (!formData?.layout) {
-    delete formData?.layout
+  console.log(attrFormData)
+  if (attrFormData.index === 0) {
+    attrFormData.index = store.listAttribute.length
+    store.createNewAttr(attrFormData)
+    closeForm()
+
+    return
   }
-  console.log(formData)
-  emit('submitEvent', formData)
+  store.updateAttributeWithSpec(Object.assign({}, attrFormData))
+  closeForm()
 }
 </script>
 

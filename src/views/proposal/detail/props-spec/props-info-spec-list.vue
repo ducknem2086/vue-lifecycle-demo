@@ -7,11 +7,10 @@
         class="background-search-input"
         @change="searchData($event)"
       ></InputText>
-      <Button severity="info" @click="createAttr()">Create</Button>
+      <Button severity="info" @click="openDialogAttr()">Create</Button>
     </div>
     <div class="background-table">
-      <!--      <DataTable :value="props.listPropSpec">-->
-      <DataTable :value="mockDataTable">
+      <DataTable :value="store.currentProps.proposalSpecification">
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -21,8 +20,8 @@
         <Column :header="'Action'">
           <template #body="{ data }">
             <div class="btn-icon-group">
-              <i :class="'pi pi-pen-to-square'" @click="updateRow"></i>
-              <i :class="'pi pi-trash'" @click="deleteRow"></i>
+              <i :class="'pi pi-pen-to-square'" @click="openDialogAttr(data)"></i>
+              <i :class="'pi pi-trash'" @click="deleteRow(data)"></i>
             </div>
           </template>
         </Column>
@@ -32,17 +31,21 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { usePropsStore } from '@/stores/proposal.ts'
+import type { ProposalSpecification } from '@/views/proposal/model/proposal.ts'
 
-const props = defineProps<{
-  listPropSpec: any[]
-}>()
 const emitEvent = defineEmits<{
-  (event: 'setDialogUpdateStatus', status: boolean): void
+  (
+    event: 'setDialogAttrStatus',
+    param: {
+      status: boolean
+      specId: string
+    },
+  ): void
   (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
   (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
 }>()
@@ -53,31 +56,24 @@ const columns = [
     header: 'Tên',
   },
   {
-    field: 'title',
+    field: 'description',
     header: 'Mô tả',
   },
 ]
+const store = usePropsStore()
 
-const mockDataTable = ref([
-  {
-    name: 'test',
-    desc: 'test',
-  },
-])
-
-function createAttr() {
-  emitEvent('setDialogUpdateStatus', true)
+function openDialogAttr(data?: ProposalSpecification) {
+  console.log(data)
+  emitEvent('setDialogAttrStatus', {
+    specId: data?.id,
+    status: true,
+  })
 }
+
+function deleteRow(data?: any) {}
 
 function searchData(eventSearch: any) {
   console.log(eventSearch.target.value)
-}
-
-function deleteRow() {}
-
-function updateRow(data: any) {
-  console.log(data)
-  emitEvent('setDialogUpdateStatus', true)
 }
 </script>
 <style scoped lang="scss">

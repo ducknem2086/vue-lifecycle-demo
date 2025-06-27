@@ -10,7 +10,7 @@
       <Button severity="info" @click="createSpec()">Create</Button>
     </div>
     <div class="background-table">
-      <DataTable :value="mockDataTable">
+      <DataTable :value="store.getListProps">
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -20,7 +20,7 @@
         <Column :header="'Action'">
           <template #body="{ data }">
             <div class="btn-icon-group">
-              <i :class="'pi pi-pen-to-square'" @click="updateRow"></i>
+              <i :class="'pi pi-pen-to-square'" @click="updateRow(data.id)"></i>
               <i :class="'pi pi-trash'" @click="deleteRow"></i>
             </div>
           </template>
@@ -31,11 +31,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { usePropsStore } from '@/stores/proposal.ts'
 
 const props = defineProps<{
   listPropSpec: any[]
@@ -52,17 +53,12 @@ const columns = [
     header: 'Tên',
   },
   {
-    field: 'desc',
+    field: 'description',
     header: 'Mô tả',
   },
 ]
 
-const mockDataTable = ref([
-  {
-    name: 'test',
-    desc: 'test',
-  },
-])
+const store = usePropsStore()
 
 function createSpec() {
   emitEvent('setDialogUpdateStatus', true)
@@ -72,11 +68,13 @@ function searchData(eventSearch: any) {
   console.log(eventSearch.target.value)
 }
 
-function deleteRow() {}
+function deleteRow(data: any) {
+  console.log(data)
+}
 
 function updateRow(data: any) {
-  console.log(data)
   emitEvent('setDialogUpdateStatus', true)
+  store.setCurrentProps(data)
 }
 </script>
 <style scoped lang="scss">

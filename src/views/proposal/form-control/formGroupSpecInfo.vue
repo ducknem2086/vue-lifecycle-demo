@@ -5,20 +5,32 @@
       <label class="background-attr-form-label">{{ control.title }}</label>
 
       <template v-if="control.type === 'textfield'">
-        <InputText ref="input" v-model="control.value" class="w-full" placeholder="Enter value" />
+        <InputText
+          ref="input"
+          v-model="formGroupSpecInfo[control.attribute]"
+          class="w-full"
+          placeholder="Enter value"
+        />
       </template>
 
       <template v-else-if="control.type === 'textarea'">
-        <Textarea v-model="control.value" class="w-full" placeholder="Enter text" rows="4" />
+        <Textarea
+          v-model="formGroupSpecInfo[control.attribute]"
+          class="w-full"
+          placeholder="Enter text"
+          rows="4"
+        />
       </template>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { defineModel, reactive } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
+import type { ProposalSpecification } from '@/views/proposal/model/proposal.ts'
 
+const formGroupSpecInfo = defineModel<Omit<ProposalSpecification, 'attribute'>>()
 const formControls = reactive([
   {
     attribute: 'name',
@@ -34,7 +46,7 @@ const formControls = reactive([
   },
   {
     title: 'Detail Description',
-    attribute: 'detailDescription',
+    attribute: 'description',
     type: 'textarea',
     value: '',
   },

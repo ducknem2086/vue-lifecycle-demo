@@ -5,16 +5,26 @@
       <label class="background-attr-form-label">{{ control.title }}</label>
 
       <template v-if="control.type === 'textfield'">
-        <InputText ref="input" v-model="control.value" class="w-full" placeholder="Enter value" />
+        <InputText
+          ref="input"
+          v-model="propModel[control.attribute]"
+          class="w-full"
+          placeholder="Enter value"
+        />
       </template>
 
       <template v-else-if="control.type === 'textarea'">
-        <Textarea v-model="control.value" class="w-full" placeholder="Enter text" rows="4" />
+        <Textarea
+          v-model="propModel[control.attribute]"
+          class="w-full"
+          placeholder="Enter text"
+          rows="4"
+        />
       </template>
       <template v-else-if="control.type === 'select'">
         <Dropdown
           :show-clear="true"
-          v-model="control.value"
+          v-model="propModel[control.attribute]"
           :options="control.options"
           optionLabel="label"
           optionValue="value"
@@ -26,10 +36,22 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Dropdown from 'primevue/dropdown'
+import type { IProposalItem } from '@/views/proposal/model/proposal.ts'
+
+const propModel = defineModel<IProposalItem>()
+
+onMounted(() => {
+  console.log(propModel.value)
+  if (propModel?.value && propModel.value?.id) {
+    formControls.forEach(({ attribute }, index) => {
+      formControls[index].value = propModel.value[attribute]
+    })
+  }
+})
 
 const formControls = reactive<
   {

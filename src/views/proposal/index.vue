@@ -2,11 +2,15 @@
   <div class="background">
     <div class="background-page">
       <div class="page-item">
-        <ListProposal :listPropSpec="[]"></ListProposal>
+        <ListProposal
+          @setDialogUpdateStatus="setDialogUpdateStatus(true)"
+          :listPropSpec="[]"
+        ></ListProposal>
       </div>
 
-      <div class="page-item">
+      <div v-if="openUpdateModal" class="page-item">
         <PropsInfoSpecUpdate
+          @closeForm="setDialogUpdateStatus(false)"
           :attribute="[]"
           :name="''"
           :shortDescription="''"
@@ -45,6 +49,13 @@
 }
 </style>
 <script setup lang="ts">
+import { ref } from 'vue'
 import ListProposal from '@/views/proposal/list-proposal.vue'
 import PropsInfoSpecUpdate from '@/views/proposal/detail/props-spec/props-info-spec-update.vue'
+
+const openUpdateModal = ref(false)
+
+function setDialogUpdateStatus(updateStatus: boolean): void {
+  openUpdateModal.value = updateStatus
+}
 </script>
