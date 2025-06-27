@@ -1,4 +1,4 @@
-import type { IProposalGroupItem } from '@/views/proposal/model/proposal.ts'
+import type { IProposalGroupItem } from '@/views/proposal-clone/model/proposal.ts'
 
 export class ProposalService {
   public propersalData: IProposalGroupItem = {

@@ -155,7 +155,7 @@ import Checkbox from 'primevue/checkbox'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
-import type { Attribute } from '@/views/proposal/model/proposal.ts'
+import type { Attribute } from '@/views/proposal-clone/model/proposal.ts'
 import { usePropsStore } from '@/stores/proposal.ts'
 
 const props = defineProps<{

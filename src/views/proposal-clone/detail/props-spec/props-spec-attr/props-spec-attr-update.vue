@@ -50,18 +50,18 @@
 
 <script setup lang="ts">
 import { defineProps, reactive, ref, watch } from 'vue'
-import FormGroupSpecInfo from '@/views/proposal/form-control/formGroupSpecInfo.vue'
+import FormGroupSpecInfo from '@/views/proposal-clone/form-control/formGroupSpecInfo.vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
-import FormGroupSpecAttr from '@/views/proposal/form-control/formGroupSpecAttr.vue'
-import PropsSpecAttrList from '@/views/proposal/detail/props-spec/props-spec-attr/props-spec-attr-list.vue'
+import FormGroupSpecAttr from '@/views/proposal-clone/form-control/formGroupSpecAttr.vue'
+import PropsSpecAttrList from '@/views/proposal-clone/detail/props-spec/props-spec-attr/props-spec-attr-list.vue'
 import Dialog from 'primevue/dialog'
 import { usePropsStore } from '@/stores/proposal.ts'
-import type { ProposalSpecification } from '@/views/proposal/model/proposal.ts'
+import type { ProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
 
 const props = defineProps<{
   specId?: string

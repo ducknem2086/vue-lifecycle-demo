@@ -36,7 +36,7 @@ import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { usePropsStore } from '@/stores/proposal.ts'
-import type { ProposalSpecification } from '@/views/proposal/model/proposal.ts'
+import type { ProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
 
 const emitEvent = defineEmits<{
   (

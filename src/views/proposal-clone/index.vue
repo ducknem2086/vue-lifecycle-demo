@@ -50,8 +50,8 @@
 </style>
 <script setup lang="ts">
 import { ref } from 'vue'
-import ListProposal from '@/views/proposal/list-proposal.vue'
-import PropsInfoSpecUpdate from '@/views/proposal/detail/props-spec/props-info-spec-update.vue'
+import ListProposal from '@/views/proposal-clone/list-proposal.vue'
+import PropsInfoSpecUpdate from '@/views/proposal-clone/detail/props-spec/props-info-spec-update.vue'
 
 const openUpdateModal = ref(false)
 

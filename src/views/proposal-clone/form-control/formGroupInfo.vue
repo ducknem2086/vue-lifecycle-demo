@@ -40,7 +40,7 @@ import { onMounted, reactive } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Dropdown from 'primevue/dropdown'
-import type { IProposalItem } from '@/views/proposal/model/proposal.ts'
+import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
 
 const propModel = defineModel<IProposalItem>()
 

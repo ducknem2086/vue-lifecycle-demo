@@ -4,7 +4,7 @@ import type {
   ExtInfo,
   IProposalItem,
   ProposalSpecification,
-} from '@/views/proposal/model/proposal.ts'
+} from '@/views/proposal-clone/model/proposal.ts'
 
 const mockData: IProposalItem = {
   code: 'MyTV',

@@ -28,7 +28,7 @@
 import { defineModel, reactive } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
-import type { ProposalSpecification } from '@/views/proposal/model/proposal.ts'
+import type { ProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
 
 const formGroupSpecInfo = defineModel<Omit<ProposalSpecification, 'attribute'>>()
 const formControls = reactive([

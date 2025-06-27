@@ -36,11 +36,11 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
-import PropsInfoSpecList from '@/views/proposal/detail/props-spec/props-info-spec-list.vue'
-import FormGroupInfo from '@/views/proposal/form-control/formGroupInfo.vue'
-import PropsSpecAttrUpdate from '@/views/proposal/detail/props-spec/props-spec-attr/props-spec-attr-update.vue'
+import PropsInfoSpecList from '@/views/proposal-clone/detail/props-spec/props-info-spec-list.vue'
+import FormGroupInfo from '@/views/proposal-clone/form-control/formGroupInfo.vue'
+import PropsSpecAttrUpdate from '@/views/proposal-clone/detail/props-spec/props-spec-attr/props-spec-attr-update.vue'
 import { usePropsStore } from '@/stores/proposal.ts'
-import type { IProposalItem } from '@/views/proposal/model/proposal.ts'
+import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
 
 const emitEvent = defineEmits<{
   (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void

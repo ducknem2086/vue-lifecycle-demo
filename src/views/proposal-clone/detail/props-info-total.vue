@@ -36,15 +36,15 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import type { IProposalSpecification } from '@/views/proposal/model/proposal.ts'
+import type { IProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import Button from 'primevue/button'
-import PropsSpecAttrList from '@/views/proposal/detail/props-spec/props-spec-attr/props-spec-attr-list.vue'
-import PropsInfoSpecUpdate from '@/views/proposal/detail/props-spec/props-info-spec-update.vue'
+import PropsSpecAttrList from '@/views/proposal-clone/detail/props-spec/props-spec-attr/props-spec-attr-list.vue'
+import PropsInfoSpecUpdate from '@/views/proposal-clone/detail/props-spec/props-info-spec-update.vue'
 
 const props = defineProps<{
   data: IProposalSpecification
