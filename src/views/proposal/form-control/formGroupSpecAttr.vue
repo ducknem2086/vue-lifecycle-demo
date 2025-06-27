@@ -130,8 +130,8 @@
     </div>
     <template #footer>
       <div class="form-attr-footer">
-        <Button label="Cancel" text severity="secondary" @click="setDialogStatus" autofocus />
-        <Button label="Save" outlined severity="secondary" @click="submitForm" autofocus />
+        <Button label="Cancel" outlined severity="secondary" @click="setDialogStatus(false)" />
+        <Button label="Save" severity="info" @click="submitForm" />
       </div>
     </template>
   </Dialog>
@@ -191,18 +191,31 @@ onBeforeMount(() => {
   }
 })
 
-const formControls = reactive<any>([
+const formControls = reactive<
   {
+    title: string
+    attribute: string
+    type: string
+    value: any
+    options?: any
+    disabled?: boolean
+    layout?: any
+  }[]
+>([
+  {
+    title: 'Code',
     attribute: 'code',
     type: 'textfield',
     value: '',
   },
   {
+    title: 'Title',
     attribute: 'title',
     type: 'textfield',
     value: '',
   },
   {
+    title: 'Data Type',
     attribute: 'dataType',
     type: 'select',
     value: '',
@@ -213,11 +226,14 @@ const formControls = reactive<any>([
     ],
   },
   {
+    title: 'Value',
     attribute: 'value',
     type: 'textfield',
     value: '',
   },
   {
+    title: 'Layout',
+
     attribute: 'layout',
     type: 'layout',
     value: '',
@@ -255,12 +271,7 @@ const formControls = reactive<any>([
 
 // Define dynamic form controls
 function clearChildrenValue(event: DropdownChangeEvent, control: any) {
-  const value: string = event.value
-  // if (value === 'selectList') {
-  //   control.layout && (control.layout.extInfo = [{ label: '', value: '' }])
-  // } else if (value === 'selectLov') {
   control.layout && (control.layout.extInfo = [{ label: '', value: '' }])
-  // }
 }
 
 // Functions for list item control
@@ -298,7 +309,8 @@ function submitForm() {
   if (!formData?.layout) {
     delete formData?.layout
   }
-  props2way.value.emit('submitEvent', formData)
+  console.log(formData)
+  emit('submitEvent', formData)
 }
 </script>
 

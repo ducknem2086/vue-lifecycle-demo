@@ -1,7 +1,8 @@
 <template>
   <div class="background-attr-form">
+    <p><b>Proposal Group Spec info</b></p>
     <div class="background-attr-form-row" v-for="(control, index) in formControls" :key="index">
-      <label class="background-attr-form-label">{{ control.attribute }}</label>
+      <label class="background-attr-form-label">{{ control.title }}</label>
 
       <template v-if="control.type === 'textfield'">
         <InputText ref="input" v-model="control.value" class="w-full" placeholder="Enter value" />
@@ -23,13 +24,16 @@ const formControls = reactive([
     attribute: 'name',
     type: 'textfield',
     value: '',
+    title: 'Name',
   },
   {
     attribute: 'shortDescription',
     type: 'textarea',
     value: '',
+    title: 'Short Description',
   },
   {
+    title: 'Detail Description',
     attribute: 'detailDescription',
     type: 'textarea',
     value: '',

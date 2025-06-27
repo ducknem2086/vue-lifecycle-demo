@@ -11,6 +11,21 @@
   box-sizing: border-box;
 }
 
+/**
+custom css for tabs
+ */
+/*.p-tabs.p-component {*/
+/*  flex-direction: row;*/
+/*}*/
+
+/*.p-tablist-tab-list {*/
+/*  flex-direction: column;*/
+/*}*/
+/**
+
+ */
+
+
 
 a,
 .green {

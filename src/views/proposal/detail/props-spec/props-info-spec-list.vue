@@ -1,13 +1,13 @@
 <template>
   <div class="background-list">
+    <p class="padding-2"><b>Proposal Group Specification</b></p>
     <div class="background-search">
       <InputText
         placeholder="Press enter to search"
         class="background-search-input"
         @change="searchData($event)"
       ></InputText>
-
-      <Button @click="createSpec()">Create</Button>
+      <Button severity="info" @click="createAttr()">Create</Button>
     </div>
     <div class="background-table">
       <!--      <DataTable :value="props.listPropSpec">-->
@@ -21,8 +21,8 @@
         <Column :header="'Action'">
           <template #body="{ data }">
             <div class="btn-icon-group">
-              <i :class="'pi pi-pen-to-square'" @click="deleteRow"></i>
               <i :class="'pi pi-pen-to-square'" @click="updateRow"></i>
+              <i :class="'pi pi-trash'" @click="deleteRow"></i>
             </div>
           </template>
         </Column>
@@ -53,7 +53,7 @@ const columns = [
     header: 'Tên',
   },
   {
-    field: 'desc',
+    field: 'title',
     header: 'Mô tả',
   },
 ]
@@ -65,7 +65,7 @@ const mockDataTable = ref([
   },
 ])
 
-function createSpec() {
+function createAttr() {
   emitEvent('setDialogUpdateStatus', true)
 }
 
@@ -75,7 +75,10 @@ function searchData(eventSearch: any) {
 
 function deleteRow() {}
 
-function updateRow() {}
+function updateRow(data: any) {
+  console.log(data)
+  emitEvent('setDialogUpdateStatus', true)
+}
 </script>
 <style scoped lang="scss">
 .background-list {
