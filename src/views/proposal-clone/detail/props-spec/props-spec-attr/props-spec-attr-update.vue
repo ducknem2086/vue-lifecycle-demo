@@ -62,6 +62,7 @@ import PropsSpecAttrList from '@/views/proposal-clone/detail/props-spec/props-sp
 import Dialog from 'primevue/dialog'
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { ProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
+import { ProposalService } from '@/views/proposal-clone/service/proposal.service.ts'
 
 const props = defineProps<{
   specId?: string
@@ -136,13 +137,22 @@ function openModalAttr(param: { attrId: string; status: boolean }) {
 }
 
 function submitDataSpec() {
-  // console.log('submit form spec', formSpecInfo)
-  // const submitData: ProposalSpecification = {
-  //   ...formSpecInfo,
-  //   id: '',
-  //   attribute: store.listAttribute,
-  // }
-  return;
+  const submitData: ProposalSpecification = {
+    ...formSpecInfo,
+    id: '',
+    attribute: store.listAttribute,
+  }
+  if (!props.specId) {
+    submitData.id = ProposalService.generateUUIDv4()
+    store.addProposalSpecToCurrentProps(submitData as any)
+    return
+  }
+  submitData.id = props.specId
+  store.updateProposalSpecDetails(submitData as any)
+
+  console.log('submit form spec', submitData, props.specId)
+
+  return
 }
 </script>
 

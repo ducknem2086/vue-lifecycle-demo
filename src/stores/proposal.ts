@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import type {
   Attribute,
-  ExtInfo,
   IProposalItem,
   ProposalSpecification,
 } from '@/views/proposal-clone/model/proposal.ts'
@@ -37,6 +36,7 @@ const mockData: IProposalItem = {
           title: '987129',
           dataType: 'number',
           value: '1987',
+          index: 0,
         },
       ],
     },
@@ -55,11 +55,6 @@ export const usePropsStore = defineStore('proposal', {
       listAttribute: [],
       currentAttribute: {},
       loading: false,
-
-      layoutAttr: {
-        ctlType: '',
-        extInfo: [],
-      },
     }
   },
   getters: {
@@ -67,8 +62,6 @@ export const usePropsStore = defineStore('proposal', {
     getLoadingStatus: (state) => state.loading,
     getListPropSpec: (state) => state.currentProps.proposalSpecification,
     getCurrentProps: (state) => state.currentProps,
-
-    listLayoutRecord: (state) => state.layoutAttr.extInfo,
   },
   actions: {
     createProposal(proposalSpecification: IProposalItem) {
@@ -114,6 +107,7 @@ export const usePropsStore = defineStore('proposal', {
       if (index !== -1) {
         this.currentProps.proposalSpecification.splice(index, 1, { ...propSpec })
       }
+      console.log(this.currentProps.proposalSpecification[index], propSpec)
     },
 
     deleteProposalSpecDetails(propSpec: ProposalSpecification) {
@@ -153,37 +147,10 @@ export const usePropsStore = defineStore('proposal', {
       console.log('update attr', this.listAttribute)
     },
 
-
     deleteAttributeWithSpec(attrData: Attribute) {
       const findAttr = this.listAttribute.findIndex((x) => x.index === attrData.index)
       if (findAttr) {
         this.listAttribute.splice(findAttr, 1)
-      }
-    },
-
-    //layout attr
-    setLayoutOfAttr(attrId: string) {
-      const findAttr = this.listAttribute.find((x) => x.id === attrId)
-      this.layoutAttr = findAttr.layout
-    },
-
-    updateLayoutOfAttr(layout: ExtInfo[] | string) {
-      if (typeof layout === 'string') {
-        this.layoutAttr.extInfo = layout as any
-      }
-      this.layoutAttr.extInfo = [...layout]
-    },
-
-    // listProps: [mockData],
-    // currentProps: mockData,
-    // listAttribute: [],
-    // currentAttribute: {},
-    // loading: false,
-
-    resetLayoutOfAttr() {
-      this.layoutAttr = {
-        extInfo: [],
-        ctlType: '',
       }
     },
 

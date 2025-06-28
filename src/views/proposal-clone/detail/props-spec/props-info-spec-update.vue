@@ -41,6 +41,7 @@ import FormGroupInfo from '@/views/proposal-clone/form-control/formGroupInfo.vue
 import PropsSpecAttrUpdate from '@/views/proposal-clone/detail/props-spec/props-spec-attr/props-spec-attr-update.vue'
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
+import CloneDeep from 'lodash/cloneDeep'
 
 const emitEvent = defineEmits<{
   (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
@@ -65,8 +66,7 @@ const currentSpecId = ref('')
 
 onBeforeMount(() => {
   if (store.currentProps) {
-    propUpdate = Object.assign({}, store.currentProps)
-    console.log(propUpdate)
+    propUpdate = CloneDeep(store.currentProps)
   }
 })
 

@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, onBeforeMount, reactive, watch } from 'vue'
+import { defineEmits, defineProps, onBeforeMount, reactive, ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
@@ -155,6 +155,7 @@ import Checkbox from 'primevue/checkbox'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import CloneDeep from 'lodash/cloneDeep'
 import type { Attribute } from '@/views/proposal-clone/model/proposal.ts'
 import { usePropsStore } from '@/stores/proposal.ts'
 
@@ -179,7 +180,7 @@ const listSelectLovLayout: {
   name: string
 }[] = []
 
-let attrFormData = reactive<Attribute>({
+const attrFormData = ref<Attribute>({
   layout: {
     extInfo: [],
     ctlType: '',
@@ -195,13 +196,13 @@ watch(
   () => props.showModal,
   () => {
     console.log(props.attrId)
-    if (props.attrId && !!props.showModal) {
+    if (props.attrId) {
       const attrData = store.listAttribute.find((x: Attribute) => x.code === props.attrId)
       if (attrData) {
-        attrFormData = Object.assign({}, attrData)
+        attrFormData.value = CloneDeep(attrData)
       }
     } else {
-      attrFormData = {
+      attrFormData.value = {
         layout: {
           extInfo: [],
           ctlType: '',
@@ -281,7 +282,8 @@ const formControls = reactive<
 
 // Define dynamic form controls
 function clearChildrenValue() {
-  attrFormData?.layout?.extInfo && (attrFormData.layout.extInfo = [{ label: '', value: '' }])
+  attrFormData?.value.layout?.extInfo &&
+    (attrFormData.value.layout.extInfo = [{ label: '', value: '' }])
 }
 
 // Functions for list item control
@@ -299,14 +301,14 @@ function closeForm() {
 
 function submitForm() {
   console.log(attrFormData)
-  if (attrFormData.index === 0) {
-    attrFormData.index = store.listAttribute.length
-    store.createNewAttr(attrFormData)
+  if (attrFormData.value.index === 0) {
+    attrFormData.value.index = store.listAttribute.length
+    store.createNewAttr(attrFormData.value)
     closeForm()
 
     return
   }
-  store.updateAttributeWithSpec(Object.assign({}, attrFormData))
+  store.updateAttributeWithSpec(attrFormData.value)
   closeForm()
 }
 </script>
