@@ -1,25 +1,11 @@
 <template>
-  <div class="background">
-    <div class="background-page">
-      <div class="page-item">
-        <ListProposal
-          @setDialogUpdateStatus="setDialogUpdateStatus(true)"
-          :listPropSpec="[]"
-        ></ListProposal>
-      </div>
-
-      <div v-if="openUpdateModal" class="page-item">
-        <PropsInfoSpecUpdate
-          @closeForm="setDialogUpdateStatus(false)"
-          :attribute="[]"
-          :name="''"
-          :shortDescription="''"
-          :description="''"
-          :id="''"
-        >
-        </PropsInfoSpecUpdate>
-      </div>
-    </div>
+  <div class="background-proposal" :class="'show-detail'">
+    <ListProposal
+      @setDialogUpdateStatus="setDialogUpdateStatus(true)"
+      :listPropSpec="[]"
+    ></ListProposal>
+    <PropsInfoSpecUpdate v-model="openUpdateModal" @closeForm="setDialogUpdateStatus(false)">
+    </PropsInfoSpecUpdate>
   </div>
 </template>
 <style scoped lang="scss">
@@ -30,22 +16,16 @@
   min-width: 100%;
 }
 
-.background-page {
+.background-proposal {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr;
+  width: 100%;
   gap: 20px;
   height: 100%;
-}
 
-.background-page.open-update {
-  grid-template-columns: 2fr 1fr;
-}
-
-.page-item {
-  padding: 20px;
-  border-radius: 10px;
-  background: white;
-  height: 100%;
+  &.show-detail {
+    grid-template-columns: 2fr 1fr;
+  }
 }
 </style>
 <script setup lang="ts">

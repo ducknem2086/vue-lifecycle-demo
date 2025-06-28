@@ -10,7 +10,7 @@
       <Button severity="info" @click="createSpec()">Create</Button>
     </div>
     <div class="background-table">
-      <DataTable :value="store.getListProps">
+      <DataTable table-style="min-width:100%" :value="store.getListProps">
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -18,10 +18,10 @@
           :header="col.header"
         ></Column>
         <Column :header="'Action'">
-          <template #body="{ data }">
+          <template #body="{ data, index }">
             <div class="btn-icon-group">
               <i :class="'pi pi-pen-to-square'" @click="updateRow(data.id)"></i>
-              <i :class="'pi pi-trash'" @click="deleteRow"></i>
+              <i :class="'pi pi-trash'" @click="deleteRow(index)"></i>
             </div>
           </template>
         </Column>
@@ -38,13 +38,8 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { usePropsStore } from '@/stores/proposal.ts'
 
-const props = defineProps<{
-  listPropSpec: any[]
-}>()
 const emitEvent = defineEmits<{
   (event: 'setDialogUpdateStatus', status: boolean): void
-  (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
-  (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
 }>()
 
 const columns = [
@@ -62,19 +57,25 @@ const store = usePropsStore()
 
 function createSpec() {
   emitEvent('setDialogUpdateStatus', true)
+  store.resetStoreData({
+    currentAttribute: true,
+    currentProps: true,
+    listAttribute: true,
+  })
 }
 
 function searchData(eventSearch: any) {
   console.log(eventSearch.target.value)
 }
 
-function deleteRow(data: any) {
-  console.log(data)
+function deleteRow(index: number) {
+  store.deleteProposal(index)
 }
 
 function updateRow(data: any) {
   emitEvent('setDialogUpdateStatus', true)
   store.setCurrentProps(data)
+  console.log(store.currentProps)
 }
 </script>
 <style scoped lang="scss">

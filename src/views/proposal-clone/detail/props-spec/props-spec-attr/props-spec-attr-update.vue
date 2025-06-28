@@ -28,7 +28,7 @@
                 :attr-id="currentAttrId"
                 :showModal="dialogAttrStatus"
                 @submitEvent="submitFormAttr"
-                @closeForm="setModalAttrStatus($event)"
+                @closeForm="setModalAttrStatus(false)"
               ></FormGroupSpecAttr>
             </div>
           </TabPanel>
@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive, ref, watch } from 'vue'
+import { defineProps, ref, watch } from 'vue'
 import FormGroupSpecInfo from '@/views/proposal-clone/form-control/formGroupSpecInfo.vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -63,6 +63,7 @@ import Dialog from 'primevue/dialog'
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { ProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
 import { ProposalService } from '@/views/proposal-clone/service/proposal.service.ts'
+import CloneDeep from 'lodash/cloneDeep'
 
 const props = defineProps<{
   specId?: string
@@ -72,14 +73,12 @@ const currentAttrId = ref('')
 
 const emitEvent = defineEmits<{
   (event: 'setDialogUpdateStatus', status: boolean): void
-  (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
-  (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
 }>()
 
 const dialogAttrStatus = ref(false)
 const store = usePropsStore()
 
-let formSpecInfo = reactive<Omit<ProposalSpecification, 'attribute'>>({
+const formSpecInfo = ref<Omit<ProposalSpecification, 'attribute'>>({
   id: '',
   name: '',
   index: 0,
@@ -95,11 +94,11 @@ watch(
       const specData = store.getCurrentProps.proposalSpecification.find(
         (x) => x.id === props.specId,
       )
-      formSpecInfo = Object.assign({}, specData)
+      formSpecInfo.value = CloneDeep(specData)
       store.setListAttributeWithSpec(props.specId)
     } else {
       store.listAttribute = []
-      formSpecInfo = {
+      formSpecInfo.value = {
         id: '',
         name: '',
         index: 0,
@@ -120,6 +119,7 @@ function setDialogStatus(modalStatus: boolean) {
 }
 
 function setModalAttrStatus(modalStatus: boolean) {
+  console.log(modalStatus)
   dialogAttrStatus.value = modalStatus
 }
 
@@ -132,26 +132,29 @@ function submitFormAttr(param: { data: string; pageCase: string }) {
 }
 
 function openModalAttr(param: { attrId: string; status: boolean }) {
+  console.log(param)
   dialogAttrStatus.value = param.status
   currentAttrId.value = param.attrId
+
 }
 
 function submitDataSpec() {
   const submitData: ProposalSpecification = {
-    ...formSpecInfo,
+    ...formSpecInfo.value,
     id: '',
     attribute: store.listAttribute,
   }
   if (!props.specId) {
     submitData.id = ProposalService.generateUUIDv4()
     store.addProposalSpecToCurrentProps(submitData as any)
+    closeForm()
     return
   }
   submitData.id = props.specId
   store.updateProposalSpecDetails(submitData as any)
 
   console.log('submit form spec', submitData, props.specId)
-
+  closeForm()
   return
 }
 </script>

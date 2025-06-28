@@ -36,22 +36,29 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Dropdown from 'primevue/dropdown'
 import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
+import { usePropsStore } from '@/stores/proposal.ts'
 
 const propModel = defineModel<IProposalItem>()
 
-onMounted(() => {
-  console.log(propModel.value)
-  if (propModel?.value && propModel.value?.id) {
-    formControls.forEach(({ attribute }, index) => {
-      formControls[index].value = propModel.value[attribute]
-    })
-  }
-})
+const store = usePropsStore()
+watch(
+  () => {
+    return [store?.currentProps?.id]
+  },
+  () => {
+    console.log(propModel.value)
+    if (propModel?.value && propModel.value?.id) {
+      formControls.forEach(({ attribute }, index) => {
+        formControls[index].value = propModel.value[attribute]
+      })
+    }
+  },
+)
 
 const formControls = reactive<
   {

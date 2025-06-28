@@ -1,5 +1,5 @@
 <template>
-  <div class="background-tab">
+  <div v-if="isOpened" class="background-tab">
     <Tabs value="0">
       <TabList>
         <Tab value="0"><i class="pi pi-file"></i></Tab>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, reactive, ref } from 'vue'
+import { ref, watch } from 'vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -42,15 +42,14 @@ import PropsSpecAttrUpdate from '@/views/proposal-clone/detail/props-spec/props-
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
 import CloneDeep from 'lodash/cloneDeep'
+import { ProposalService } from '@/views/proposal-clone/service/proposal.service.ts'
 
 const emitEvent = defineEmits<{
-  (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
-  (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
   (event: 'closeForm'): void
 }>()
 
 const openModal = ref(false)
-let propUpdate = reactive<IProposalItem>({
+const propUpdate = ref<IProposalItem>({
   code: '',
   name: '',
   description: '',
@@ -63,15 +62,44 @@ let propUpdate = reactive<IProposalItem>({
 }) // chỗ này nếu để ref nó không ăn, tìm hiểu sau
 const store = usePropsStore()
 const currentSpecId = ref('')
+const isOpened = defineModel<boolean>()
 
-onBeforeMount(() => {
-  if (store.currentProps) {
-    propUpdate = CloneDeep(store.currentProps)
+watch(
+  () => [store?.currentProps?.id],
+  () => {
+    if (!store.currentProps?.id) {
+      propUpdate.value = {
+        code: '',
+        name: '',
+        description: '',
+        groupType: '',
+        proposalSpecification: [],
+        id: '',
+        lastModified: {
+          $date: '',
+        },
+      }
+    } else {
+      if (!isOpened.value) {
+        store.resetStoreData({
+          currentProps: true,
+        })
+      } else initData()
+    }
+  },
+)
+
+function initData() {
+  if (store?.currentProps?.id) {
+    propUpdate.value = CloneDeep(store.currentProps)
+    store.setListAttributeWithSpec(propUpdate.value.id)
+    console.log(propUpdate)
   }
-})
+}
 
 function closeForm() {
   emitEvent('closeForm')
+  console.log(store.listProps)
 }
 
 function openModalAttrId(param: { status: boolean; specId: string }) {
@@ -85,8 +113,21 @@ function setModalInfoStatus(status: boolean) {
 }
 
 function submitDataSpec() {
-  console.log('submit form spec', propUpdate)
-  store.updateCurrentProps(propUpdate)
+  console.log('submitDataSpec', store.currentProps)
+  const newProps = { ...store.currentProps, ...propUpdate.value }
+  if (!store.currentProps.id) {
+    newProps.id = ProposalService.generateUUIDv4()
+    store.createProposal(newProps)
+
+
+    // tạo thành công thì cho reset data đi
+    store.resetStoreData({
+      currentProps:true
+    })
+    return
+  }
+  console.log(store.currentProps)
+  store.updatePropToList(newProps)
 }
 </script>
 

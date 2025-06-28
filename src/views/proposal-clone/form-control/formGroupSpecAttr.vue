@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, onBeforeMount, reactive, ref, watch } from 'vue'
+import { defineEmits, defineProps, reactive, ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
@@ -195,7 +195,6 @@ const attrFormData = ref<Attribute>({
 watch(
   () => props.showModal,
   () => {
-    console.log(props.attrId)
     if (props.attrId) {
       const attrData = store.listAttribute.find((x: Attribute) => x.code === props.attrId)
       if (attrData) {
@@ -216,16 +215,6 @@ watch(
     }
   },
 )
-
-onBeforeMount(() => {
-  for (let i = 0; i < 100; i++) {
-    const item: { id: string; name: string } = {
-      id: 'lov' + i,
-      name: 'lov_value' + i,
-    }
-    listSelectLovLayout.push(item)
-  }
-})
 
 const formControls = reactive<
   {
@@ -300,8 +289,7 @@ function closeForm() {
 }
 
 function submitForm() {
-  console.log(attrFormData)
-  if (attrFormData.value.index === 0) {
+  if (attrFormData.value.index === 0 && !props.attrId) {
     attrFormData.value.index = store.listAttribute.length
     store.createNewAttr(attrFormData.value)
     closeForm()

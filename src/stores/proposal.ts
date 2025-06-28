@@ -4,6 +4,7 @@ import type {
   IProposalItem,
   ProposalSpecification,
 } from '@/views/proposal-clone/model/proposal.ts'
+import CloneDeep from 'lodash/cloneDeep'
 
 const mockData: IProposalItem = {
   code: 'MyTV',
@@ -47,15 +48,26 @@ const mockData: IProposalItem = {
   },
 }
 
+export interface IPropsStore {
+  listProps: IProposalItem[]
+  // currentProps:any,
+  currentProps: IProposalItem
+  listAttribute: Attribute[]
+  currentAttribute: Attribute
+  loading: any
+}
+
 export const usePropsStore = defineStore('proposal', {
   state: () => {
-    return {
+    const initData: IPropsStore = {
       listProps: [mockData],
-      currentProps: mockData,
+      // currentProps: mockData,
+      currentProps: {},
       listAttribute: [],
       currentAttribute: {},
       loading: false,
     }
+    return initData
   },
   getters: {
     getListProps: (state) => state.listProps,
@@ -64,17 +76,22 @@ export const usePropsStore = defineStore('proposal', {
     getCurrentProps: (state) => state.currentProps,
   },
   actions: {
+    /**
+     * chỗ này call api cập nhật xong thì cần phải xoá lại current prop
+     * @param proposalSpecification
+     */
     createProposal(proposalSpecification: IProposalItem) {
-      this.listProps = [...this.listProps, proposalSpecification]
+      this.currentProps = proposalSpecification
+      this.listProps = [...this.listProps, this.currentProps]
     },
 
-    setCurrentProps(code: string) {
-      const findProps = this.listProps.find((prop) => prop.code === code)
+    setCurrentProps(id: string) {
+      const findProps = this.listProps.find((prop) => prop.id === id)
       if (findProps) {
-        this.currentProps = findProps
+        this.currentProps = CloneDeep(findProps)
       }
     },
-    updateCurrentProps(state: IProposalItem) {
+    updatePropToList(state: IProposalItem) {
       this.currentProps = { ...state }
       this.updateCurrentToListProps()
     },
@@ -86,21 +103,14 @@ export const usePropsStore = defineStore('proposal', {
         this.listProps.splice(index, 1, { ...this.currentProps })
       }
     },
-    deleteProposal(id: string) {
-      const find = this.listProps.findIndex((prop) => prop.id === id)
-      if (find) {
-        this.listProps.splice(find, 1)
-      }
+    deleteProposal(index: number) {
+      this.listProps.splice(index, 1)
     },
 
     /**
      * ____________________phan nay la update spec
      * @param propSpec
      */
-
-    updateProposalSpecToCurrentProps(propSpec: ProposalSpecification[]) {
-      this.currentProps.proposalSpecification = propSpec
-    },
 
     updateProposalSpecDetails(propSpec: ProposalSpecification) {
       const index = this.currentProps.proposalSpecification.findIndex((x) => x.id === propSpec.id)
@@ -110,13 +120,15 @@ export const usePropsStore = defineStore('proposal', {
       console.log(this.currentProps.proposalSpecification[index], propSpec)
     },
 
-    deleteProposalSpecDetails(propSpec: ProposalSpecification) {
-      const find = this.currentProps.proposalSpecification.findIndex((x) => x.id === propSpec.id)
-      if (find) {
-        this.currentProps.proposalSpecification.splice(find, 1)
-      }
+    deleteProposalSpecDetails(index: number) {
+      this.currentProps.proposalSpecification.splice(index, 1)
     },
     addProposalSpecToCurrentProps(propSpec: ProposalSpecification) {
+      console.log(this.currentProps, propSpec)
+      if (!this.currentProps.proposalSpecification) {
+        this.currentProps.proposalSpecification = [propSpec]
+        return
+      }
       this.currentProps.proposalSpecification = [
         ...this.currentProps.proposalSpecification,
         propSpec,
@@ -128,9 +140,9 @@ export const usePropsStore = defineStore('proposal', {
      */
 
     setListAttributeWithSpec(specId: string) {
-      const findAttribute = this.currentProps.proposalSpecification.find((x) => x.id === specId)
+      const findAttribute = this.currentProps?.proposalSpecification?.find((x) => x.id === specId)
       if (findAttribute) {
-        this.listAttribute = findAttribute.attribute
+        this.listAttribute = CloneDeep(findAttribute?.attribute ?? [])
       }
     },
 
@@ -147,11 +159,8 @@ export const usePropsStore = defineStore('proposal', {
       console.log('update attr', this.listAttribute)
     },
 
-    deleteAttributeWithSpec(attrData: Attribute) {
-      const findAttr = this.listAttribute.findIndex((x) => x.index === attrData.index)
-      if (findAttr) {
-        this.listAttribute.splice(findAttr, 1)
-      }
+    deleteAttributeWithSpec(index: number) {
+      this.listAttribute.splice(index, 1)
     },
 
     resetListAttribute() {
@@ -162,12 +171,14 @@ export const usePropsStore = defineStore('proposal', {
       this.currentAttribute = {}
     },
 
-    resetAllData() {
-      this.listProps = [mockData]
-      this.currentProps = mockData
-      this.listAttribute = []
-      this.currentAttribute = {}
-      this.loading = false
+    resetStoreData(param: {
+      [key in keyof IPropsStore]?: boolean
+    }) {
+      param.listProps && (this.listProps = [])
+      param.currentProps && (this.currentProps = {})
+      param.listAttribute && (this.listAttribute = [])
+      param.currentAttribute && (this.currentAttribute = {})
+      param.loading && (this.loading = false)
     },
   },
 })

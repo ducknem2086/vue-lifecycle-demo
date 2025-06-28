@@ -18,10 +18,10 @@
           :header="col.header"
         ></Column>
         <Column :header="'Action'">
-          <template #body="{ data }">
+          <template #body="{ data, index }">
             <div class="btn-icon-group">
               <i :class="'pi pi-pen-to-square'" @click="openDialogAttr(data)"></i>
-              <i :class="'pi pi-trash'" @click="deleteRow(data)"></i>
+              <i :class="'pi pi-trash'" @click="deleteRow(index)"></i>
             </div>
           </template>
         </Column>
@@ -46,8 +46,6 @@ const emitEvent = defineEmits<{
       specId: string
     },
   ): void
-  (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
-  (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
 }>()
 
 const columns = [
@@ -63,14 +61,15 @@ const columns = [
 const store = usePropsStore()
 
 function openDialogAttr(data?: ProposalSpecification) {
-  console.log(data)
   emitEvent('setDialogAttrStatus', {
     specId: data?.id,
     status: true,
   })
 }
 
-function deleteRow(data?: any) {}
+function deleteRow(index: number) {
+  store.deleteProposalSpecDetails(index)
+}
 
 function searchData(eventSearch: any) {
   console.log(eventSearch.target.value)

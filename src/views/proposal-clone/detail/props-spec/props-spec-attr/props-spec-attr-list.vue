@@ -19,10 +19,10 @@
           :header="col.header"
         ></Column>
         <Column :header="'Action'">
-          <template #body="{ data }">
+          <template #body="{ data, index }">
             <div class="btn-icon-group">
               <i :class="'pi pi-pen-to-square'" @click="updateRow(data)"></i>
-              <i :class="'pi pi-trash'" @click="deleteRow"></i>
+              <i :class="'pi pi-trash'" @click="deleteRow(index)"></i>
             </div>
           </template>
         </Column>
@@ -46,8 +46,6 @@ const emitEvent = defineEmits<{
       status: boolean
     },
   ): void
-  (event: 'updateAttr', param: { data?: any; pageCase: 'update' | 'create' }): void
-  (event: 'updateSpec', param: { data?: any; pageCase: 'update' | 'create' }): void
 }>()
 
 const columns = [
@@ -78,7 +76,9 @@ function searchData(eventSearch: any) {
   console.log(eventSearch.target.value)
 }
 
-function deleteRow() {}
+function deleteRow(index: number) {
+  store.deleteAttributeWithSpec(index)
+}
 
 function updateRow(data?: any) {
   console.log(data)
