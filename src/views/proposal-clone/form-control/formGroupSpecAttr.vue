@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, reactive, ref, watch } from 'vue'
+import { defineEmits, defineProps, reactive, ref, watch, onBeforeMount } from 'vue'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
@@ -190,6 +190,16 @@ const attrFormData = ref<Attribute>({
   dataType: '',
   value: '',
   index: 0,
+})
+
+onBeforeMount(() => {
+  for (let i = 0; i < 100; i++) {
+    const item: { id: string; name: string } = {
+      id: 'lov' + i,
+      name: 'lov_value' + i,
+    }
+    listSelectLovLayout.push(item)
+  }
 })
 
 watch(

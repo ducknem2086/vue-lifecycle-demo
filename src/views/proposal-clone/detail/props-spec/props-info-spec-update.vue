@@ -91,7 +91,7 @@ watch(
 
 function initData() {
   if (store?.currentProps?.id) {
-    propUpdate.value = CloneDeep(store.currentProps)
+    propUpdate.value = Object.assign({},store.currentProps)
     store.setListAttributeWithSpec(propUpdate.value.id)
     console.log(propUpdate)
   }
@@ -119,10 +119,9 @@ function submitDataSpec() {
     newProps.id = ProposalService.generateUUIDv4()
     store.createProposal(newProps)
 
-
     // tạo thành công thì cho reset data đi
     store.resetStoreData({
-      currentProps:true
+      currentProps: true,
     })
     return
   }
