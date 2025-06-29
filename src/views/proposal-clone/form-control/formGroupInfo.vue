@@ -164,7 +164,7 @@ const formControls = reactive<
 
 .background-attr-form-row {
   display: grid;
-  grid-template-columns: 150px auto;
+  grid-template-columns: 80px auto;
   align-items: center;
   gap: 10px;
 }

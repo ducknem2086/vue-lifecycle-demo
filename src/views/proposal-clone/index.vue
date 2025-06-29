@@ -1,5 +1,5 @@
 <template>
-  <div class="background-proposal" :class="'show-detail'">
+  <div class="background-proposal" :class="openUpdateModal ? 'show-detail' : ''">
     <ListProposal
       @setDialogUpdateStatus="setDialogUpdateStatus(true)"
       :listPropSpec="[]"
@@ -21,10 +21,11 @@
   grid-template-columns: 1fr;
   width: 100%;
   gap: 20px;
+  padding: 20px;
   height: 100%;
 
   &.show-detail {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 400px;
   }
 }
 </style>

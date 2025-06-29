@@ -163,13 +163,6 @@ export const usePropsStore = defineStore('proposal', {
       this.listAttribute.splice(index, 1)
     },
 
-    resetListAttribute() {
-      this.listAttribute = []
-    },
-
-    resetCurrentAttribute() {
-      this.currentAttribute = {}
-    },
 
     resetStoreData(param: {
       [key in keyof IPropsStore]?: boolean

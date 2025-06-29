@@ -10,7 +10,13 @@
       <Button severity="info" @click="createSpec()">Create</Button>
     </div>
     <div class="background-table">
-      <DataTable table-style="min-width:100%" :value="store.getListProps">
+      <DataTable
+        paginator
+        :rows="5"
+        :rowsPerPageOptions="[1,2,3,4]"
+        table-style="min-width:100%"
+        :value="listPropsFilter"
+      >
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -31,12 +37,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { usePropsStore } from '@/stores/proposal.ts'
+import { computed, ref } from 'vue'
 
 const emitEvent = defineEmits<{
   (event: 'setDialogUpdateStatus', status: boolean): void
@@ -54,6 +60,14 @@ const columns = [
 ]
 
 const store = usePropsStore()
+const searchText = ref<string>('')
+const listPropsFilter = computed(() => {
+  return (
+    store?.listProps?.filter((x) =>
+      x.name.toLowerCase().includes(searchText.value.toLowerCase()),
+    ) ?? []
+  )
+})
 
 function createSpec() {
   emitEvent('setDialogUpdateStatus', true)
@@ -65,7 +79,7 @@ function createSpec() {
 }
 
 function searchData(eventSearch: any) {
-  console.log(eventSearch.target.value)
+  searchText.value = eventSearch.target.value
 }
 
 function deleteRow(index: number) {
@@ -81,6 +95,10 @@ function updateRow(data: any) {
 <style scoped lang="scss">
 .background-list {
   width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
 }
 
 .btn-icon-group {

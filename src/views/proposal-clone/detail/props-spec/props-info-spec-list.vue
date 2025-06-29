@@ -10,7 +10,7 @@
       <Button severity="info" @click="openDialogAttr()">Create</Button>
     </div>
     <div class="background-table">
-      <DataTable :value="store.currentProps.proposalSpecification">
+      <DataTable :value="listSpecDisc" :rows="5" :rowsPerPageOptions="[1, 2, 3, 4]">
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -37,6 +37,7 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { ProposalSpecification } from '@/views/proposal-clone/model/proposal.ts'
+import { computed, ref } from 'vue'
 
 const emitEvent = defineEmits<{
   (
@@ -59,6 +60,14 @@ const columns = [
   },
 ]
 const store = usePropsStore()
+const searchText = ref<string>('')
+const listSpecDisc = computed(() => {
+  return (
+    store?.currentProps?.proposalSpecification?.filter((x) =>
+      x.name.toLowerCase().includes(searchText.value.toLowerCase()),
+    ) ?? []
+  )
+})
 
 function openDialogAttr(data?: ProposalSpecification) {
   emitEvent('setDialogAttrStatus', {
@@ -72,7 +81,7 @@ function deleteRow(index: number) {
 }
 
 function searchData(eventSearch: any) {
-  console.log(eventSearch.target.value)
+  searchText.value = eventSearch.target.value
 }
 </script>
 <style scoped lang="scss">

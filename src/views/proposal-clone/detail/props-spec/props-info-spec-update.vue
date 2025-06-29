@@ -41,7 +41,6 @@ import FormGroupInfo from '@/views/proposal-clone/form-control/formGroupInfo.vue
 import PropsSpecAttrUpdate from '@/views/proposal-clone/detail/props-spec/props-spec-attr/props-spec-attr-update.vue'
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
-import CloneDeep from 'lodash/cloneDeep'
 import { ProposalService } from '@/views/proposal-clone/service/proposal.service.ts'
 
 const emitEvent = defineEmits<{
@@ -91,9 +90,9 @@ watch(
 
 function initData() {
   if (store?.currentProps?.id) {
-    propUpdate.value = Object.assign({},store.currentProps)
+    propUpdate.value = Object.assign({}, store.currentProps)
     store.setListAttributeWithSpec(propUpdate.value.id)
-    console.log(propUpdate)
+    console.log(propUpdate.value)
   }
 }
 
@@ -114,7 +113,10 @@ function setModalInfoStatus(status: boolean) {
 
 function submitDataSpec() {
   console.log('submitDataSpec', store.currentProps)
-  const newProps = { ...store.currentProps, ...propUpdate.value }
+  const { proposalSpecification, ...propInfo } = propUpdate.value
+  const newProps = { ...store.currentProps, ...propInfo }
+
+
   if (!store.currentProps.id) {
     newProps.id = ProposalService.generateUUIDv4()
     store.createProposal(newProps)
@@ -125,7 +127,6 @@ function submitDataSpec() {
     })
     return
   }
-  console.log(store.currentProps)
   store.updatePropToList(newProps)
 }
 </script>

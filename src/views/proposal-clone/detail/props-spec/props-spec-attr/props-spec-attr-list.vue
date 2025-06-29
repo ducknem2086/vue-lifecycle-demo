@@ -11,7 +11,7 @@
       <Button severity="info" @click="createSpec()">Create</Button>
     </div>
     <div class="background-table">
-      <DataTable :value="store.listAttribute">
+      <DataTable :rows="3" :rowsPerPageOptions="[1, 2, 3, 4]" :value="listAttrSpec">
         <Column
           v-for="col of columns"
           :key="col.field"
@@ -37,6 +37,7 @@ import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { usePropsStore } from '@/stores/proposal.ts'
+import { computed, ref } from 'vue'
 
 const emitEvent = defineEmits<{
   (
@@ -64,6 +65,12 @@ const columns = [
 ]
 
 const store = usePropsStore()
+const searchText = ref<string>('')
+const listAttrSpec = computed(() => {
+  return store.listAttribute.filter((x) =>
+    x.title.toLowerCase().includes(searchText.value.toLowerCase()),
+  )
+})
 
 function createSpec() {
   emitEvent('setDialogAttrStatus', {
@@ -73,7 +80,7 @@ function createSpec() {
 }
 
 function searchData(eventSearch: any) {
-  console.log(eventSearch.target.value)
+  searchText.value = eventSearch.target.value
 }
 
 function deleteRow(index: number) {
