@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isOpened" class="background-tab">
+  <div ref="tabRef" v-show="isOpened" class="background-tab">
     <Tabs value="0">
       <TabList>
         <Tab value="0"><i class="pi pi-file"></i></Tab>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -42,6 +42,7 @@ import PropsSpecAttrUpdate from '@/views/proposal-clone/detail/props-spec/props-
 import { usePropsStore } from '@/stores/proposal.ts'
 import type { IProposalItem } from '@/views/proposal-clone/model/proposal.ts'
 import { ProposalService } from '@/views/proposal-clone/service/proposal.service.ts'
+import gsap from 'gsap'
 
 const emitEvent = defineEmits<{
   (event: 'closeForm'): void
@@ -62,6 +63,18 @@ const propUpdate = ref<IProposalItem>({
 const store = usePropsStore()
 const currentSpecId = ref('')
 const isOpened = defineModel<boolean>()
+const tabRef = ref<HTMLElement | null>(null)
+
+watch(isOpened, async (val) => {
+  if (val) {
+    await nextTick()
+    gsap.fromTo(
+      tabRef.value,
+      { x: '100%', opacity: 0 },
+      { x: '0%', opacity: 1, duration: 0.6, ease: 'power2.out' },
+    )
+  }
+})
 
 watch(
   () => [store?.currentProps?.id],
@@ -115,7 +128,6 @@ function submitDataSpec() {
   console.log('submitDataSpec', store.currentProps)
   const { proposalSpecification, ...propInfo } = propUpdate.value
   const newProps = { ...store.currentProps, ...propInfo }
-
 
   if (!store.currentProps.id) {
     newProps.id = ProposalService.generateUUIDv4()

@@ -13,7 +13,7 @@
       <DataTable
         paginator
         :rows="5"
-        :rowsPerPageOptions="[1,2,3,4]"
+        :rowsPerPageOptions="[1, 2, 3, 4]"
         table-style="min-width:100%"
         :value="listPropsFilter"
       >
@@ -43,11 +43,14 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { usePropsStore } from '@/stores/proposal.ts'
 import { computed, ref } from 'vue'
+import gsap from 'gsap'
+import Flip from 'gsap/Flip'
+
+gsap.registerPlugin(Flip)
 
 const emitEvent = defineEmits<{
   (event: 'setDialogUpdateStatus', status: boolean): void
 }>()
-
 const columns = [
   {
     field: 'name',
@@ -94,11 +97,11 @@ function updateRow(data: any) {
 </script>
 <style scoped lang="scss">
 .background-list {
-  width: 100%;
-  height: 100%;
   background: white;
   border-radius: 10px;
   padding: 20px;
+  flex-basis: 100%;
+  transition: none;
 }
 
 .btn-icon-group {
